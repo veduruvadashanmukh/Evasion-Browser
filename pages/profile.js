@@ -32,4 +32,18 @@ $('manageForm').addEventListener('submit',async e=>{e.preventDefault();error('ma
 $('lockNow').onclick=async()=>{await api.lock(false);window.close();};
 $('passwordForm').addEventListener('submit',async e=>{e.preventDefault();error('passwordError');try{await api.changePassword({currentPassword:$('currentPassword').value,newPassword:$('newPassword').value});e.target.reset();error('passwordError','Password updated. Sign in again next time.');}catch(err){error('passwordError',err.message);}});
 $('pinForm').addEventListener('submit',async e=>{e.preventDefault();error('pinError');try{const hadPin=Boolean($('newPin').value);await api.setPin({password:$('pinPassword').value,pin:$('newPin').value});e.target.reset();error('pinError',hadPin?'PIN updated.':'PIN removed.');}catch(err){error('pinError',err.message);}});
+$('resetBrowser').onclick=async()=>{
+  error('resetError');
+  if(!$('resetConfirm').checked)return error('resetError','Confirm that you understand this cannot be undone.');
+  if(!$('resetPassword').value)return error('resetError','Enter your profile password.');
+  const confirmed=confirm('Permanently erase all Evasion Browser data on this computer?');
+  if(!confirmed)return;
+  $('resetBrowser').disabled=true;
+  $('resetBrowser').textContent='Resetting…';
+  try{await api.resetBrowserData($('resetPassword').value);}catch(err){
+    $('resetBrowser').disabled=false;
+    $('resetBrowser').textContent='Reset browser and restart';
+    error('resetError',err.message);
+  }
+};
 load().catch(err=>{show('loginView');error('loginError',err.message);});

@@ -104,6 +104,16 @@ class BrowserStore {
     return this.data;
   }
 
+  async reset() {
+    await this.queue;
+    this.data = structuredClone(DEFAULTS);
+    await Promise.allSettled([
+      fs.rm(this.filePath, { force: true }),
+      fs.rm(this.legacyFilePath, { force: true })
+    ]);
+    return this.data;
+  }
+
   save() {
     this.queue = this.queue.then(async () => {
       await fs.mkdir(path.dirname(this.filePath), { recursive: true });

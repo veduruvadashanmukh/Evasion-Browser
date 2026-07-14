@@ -3135,6 +3135,49 @@ function registerProfileHandlers() {
     setImmediate(() => openProfileWindow());
     return result;
   });
+  profileHandle("profile-reset-browser-data", async (data) => {
+    const password = String(data?.password || "");
+    await profileService.resetAll(password);
+
+    vault?.lock();
+    await vault?.reset?.();
+    await browserStore?.reset?.();
+
+    history.length = 0;
+    downloads.length = 0;
+    bookmarks.clear();
+    securityStats.blockedAds = 0;
+    securityStats.blockedTrackers = 0;
+    securityStats.blockedMiners = 0;
+    securityStats.blockedOther = 0;
+    securityStats.startedAt = Date.now();
+
+    const sessions = new Set([
+      session.defaultSession,
+      session.fromPartition("persist:evasion-browser")
+    ]);
+    for (const ctx of contexts.values()) {
+      for (const tab of ctx.tabs.values()) {
+        if (tabReady(tab)) sessions.add(tab.view.webContents.session);
+      }
+    }
+    await Promise.allSettled([...sessions].map(async (ses) => {
+      await ses.clearStorageData();
+      await ses.clearCache();
+      await ses.clearAuthCache();
+      await ses.clearHostResolverCache();
+    }));
+
+    for (const ctx of contexts.values()) if (windowReady(ctx)) ctx.window.destroy();
+    if (profileWindow && !profileWindow.isDestroyed()) profileWindow.destroy();
+
+    setTimeout(() => {
+      app.relaunch();
+      app.exit(0);
+    }, 250);
+    return { success: true };
+  });
+
   profileHandle("profile-random-color", () => ({ color: `#${crypto.randomBytes(3).toString("hex")}` }));
 
   handle("browser-open-profile", () => {

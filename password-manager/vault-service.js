@@ -160,6 +160,15 @@ class VaultService {
     return { success: true };
   }
 
+  async reset() {
+    this.lock();
+    await Promise.allSettled([
+      fs.rm(this.filePath, { force: true }),
+      fs.rm(this.legacyFilePath, { force: true })
+    ]);
+    return { success: true };
+  }
+
   async changeMasterPassword(currentPassword, newPassword) {
     await this.unlock(currentPassword);
     if (String(newPassword).length < 10) throw new Error('New master password must be at least 10 characters.');

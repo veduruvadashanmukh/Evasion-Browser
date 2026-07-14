@@ -181,6 +181,18 @@ class ProfileService {
     return { success: true, hasPin: Boolean(this.record.pinAuth) };
   }
 
+  async resetAll(password) {
+    this.assertUnlocked();
+    if (!this.verify(password, this.record.auth)) throw new Error('Password is incorrect.');
+    clearInterval(this.timer);
+    this.unlocked = false;
+    this.record = null;
+    this.lockMinutes = 30;
+    try { await fs.rm(this.filePath, { force: true }); } catch {}
+    this.startTimer();
+    return { success: true };
+  }
+
   lock({ forget = false } = {}) {
     this.unlocked = false;
     if (forget && this.record) { this.record.remember = null; this.save().catch(() => {}); }
