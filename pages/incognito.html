@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self' data:; object-src 'none';">
+  <title>Incognito — Evasion</title>
+  <link rel="stylesheet" href="incognito.css">
+</head>
+<body>
+  <main class="private-shell">
+    <div class="mask-icon">◒</div>
+    <p class="eyebrow">PRIVATE SESSION</p>
+    <h1>You’re browsing incognito</h1>
+    <p class="intro">This window uses a temporary session. Local history, cookies and site data from this session are discarded when all incognito windows are closed.</p>
+    <form id="searchForm" class="private-search">
+      <span>⌕</span>
+      <input id="searchInput" type="text" placeholder="Search privately or enter an address" autocomplete="off" autofocus>
+      <button type="submit">Browse privately</button>
+    </form>
+    <section class="privacy-grid">
+      <article><strong>Not saved</strong><p>Browsing history, cookies and form data from this private session.</p></article>
+      <article><strong>Still visible to others</strong><p>Websites, your network provider, school or employer may still see activity.</p></article>
+      <article><strong>Separate session</strong><p>Your normal browser cookies and sign-ins are not reused here.</p></article>
+    </section>
+    <p class="tip">Close all incognito windows to end the private session.</p>
+  </main>
+  <script src="incognito.js"></script>
+</body>
+</html>

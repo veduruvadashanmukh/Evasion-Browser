@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https:; object-src 'none'">
+<title>Evasion Nexus</title>
+<link rel="stylesheet" href="common.css">
+<link rel="stylesheet" href="advanced.css">
+</head>
+<body>
+<header class="topbar">
+  <div><p class="eyebrow">Evasion Browser</p><h1>Evasion Nexus</h1><p class="muted">Advanced privacy, performance, media and knowledge tools.</p></div>
+  <button id="refreshBtn" class="secondary">Refresh</button>
+</header>
+<main>
+  <section class="hero-grid">
+    <article class="hero-card"><span>Sleeping tabs</span><strong id="sleepingCount">0</strong><small>Memory saver</small></article>
+    <article class="hero-card"><span>Security blocks</span><strong id="securityTotal">0</strong><small>Ads, trackers and miners</small></article>
+    <article class="hero-card"><span>System memory</span><strong id="memoryValue">—</strong><small id="systemValue">Loading…</small></article>
+    <article class="hero-card"><span>Open tabs</span><strong id="openTabsCount">0</strong><small id="audibleCount">0 playing audio</small></article>
+  </section>
+
+  <section class="panel command-panel">
+    <div><p class="eyebrow">Command palette</p><h2>Run a browser command</h2></div>
+    <div class="command-row"><input id="commandInput" placeholder="Try: sleep tabs, shred site, open security"><button id="runCommandBtn">Run</button></div>
+    <div class="chips"><button data-command="sleep tabs">Sleep tabs</button><button data-command="shred site">Shred current site</button><button data-command="open performance">Performance</button><button data-command="open security">Security</button><button data-command="open settings">Settings</button></div>
+    <p id="commandStatus" class="status"></p>
+  </section>
+
+  <div class="two-column">
+    <section class="panel">
+      <div class="section-head"><div><p class="eyebrow">Intelligent tabs</p><h2>Tab optimizer</h2></div><button id="sleepInactiveBtn">Sleep inactive</button></div>
+      <label class="range-row">Sleep after <input id="sleepMinutes" type="number" min="1" max="240" value="20"> minutes</label>
+      <div id="tabsList" class="list"></div>
+    </section>
+
+    <section class="panel">
+      <div class="section-head"><div><p class="eyebrow">Privacy</p><h2>Site shredder</h2></div><button id="shredBtn" class="danger">Shred now</button></div>
+      <p class="muted">Clears cookies, local storage, IndexedDB, service workers, cache storage and history for the active site.</p>
+      <div class="toggle-card"><div><strong>Streaming mode</strong><small>Mute background tabs and reduce accidental exposure.</small></div><input id="streamingToggle" type="checkbox"></div>
+      <div class="toggle-card"><div><strong>Gaming session mode</strong><small>Sleep background tabs and prioritize the active page.</small></div><input id="gamingToggle" type="checkbox"></div>
+      <p id="privacyStatus" class="status"></p>
+    </section>
+  </div>
+
+  <div class="two-column">
+    <section class="panel">
+      <div class="section-head"><div><p class="eyebrow">Media center</p><h2>Playing tabs</h2></div></div>
+      <div id="mediaList" class="list"></div>
+    </section>
+
+    <section class="panel">
+      <div class="section-head"><div><p class="eyebrow">Knowledge vault</p><h2>Save the active page</h2></div><button id="saveKnowledgeBtn">Save page</button></div>
+      <textarea id="knowledgeNote" placeholder="Add an optional note about this page"></textarea>
+      <div id="knowledgeList" class="list"></div>
+    </section>
+  </div>
+
+  <section class="panel">
+    <p class="eyebrow">Reliability</p><h2>Browser health</h2>
+    <div class="health-grid">
+      <div><strong>Crash recovery</strong><span>Session tabs are stored and restored after restart.</span></div>
+      <div><strong>Private sessions</strong><span>Incognito windows use temporary isolated partitions.</span></div>
+      <div><strong>Encrypted vault</strong><span>Password data stays in the local encrypted vault.</span></div>
+      <div><strong>Feature isolation</strong><span>Management tools use a restricted preload bridge.</span></div>
+    </div>
+  </section>
+</main>
+<script src="advanced.js"></script>
+</body>
+</html>

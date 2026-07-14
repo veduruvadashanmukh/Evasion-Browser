@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="
+            default-src 'self';
+            script-src 'self';
+            style-src 'self';
+            img-src 'self' data: https:;
+            object-src 'none';
+        " http-equiv="Content-Security-Policy"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Evasion Browser</title>
+<link href="style.css" rel="stylesheet"/>
+</head>
+<body><svg aria-hidden="true" class="icon-sprite" focusable="false" height="0" width="0">
+<symbol id="icon-home" viewbox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"></path><path d="M5.5 10.5V20h13v-9.5"></path><path d="M9.5 20v-6h5v6"></path></symbol>
+<symbol id="icon-back" viewbox="0 0 24 24"><path d="m15 18-6-6 6-6"></path><path d="M9 12h11"></path></symbol>
+<symbol id="icon-forward" viewbox="0 0 24 24"><path d="m9 18 6-6-6-6"></path><path d="M4 12h11"></path></symbol>
+<symbol id="icon-reload" viewbox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.35 5.65"></path><path d="M20 4v7h-7"></path></symbol>
+<symbol id="icon-stop" viewbox="0 0 24 24"><rect height="12" rx="2" width="12" x="6" y="6"></rect></symbol>
+<symbol id="icon-star" viewbox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9L12 3Z"></path></symbol>
+<symbol id="icon-star-filled" viewbox="0 0 24 24"><path class="icon-fill" d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9L12 3Z"></path></symbol>
+<symbol id="icon-menu" viewbox="0 0 24 24"><circle class="icon-fill" cx="12" cy="5" r="1.4"></circle><circle class="icon-fill" cx="12" cy="12" r="1.4"></circle><circle class="icon-fill" cx="12" cy="19" r="1.4"></circle></symbol>
+<symbol id="icon-plus" viewbox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></symbol>
+<symbol id="icon-chevron-down" viewbox="0 0 24 24"><path d="m6 9 6 6 6-6"></path></symbol>
+<symbol id="icon-chevron-left" viewbox="0 0 24 24"><path d="m15 18-6-6 6-6"></path></symbol>
+<symbol id="icon-chevron-right" viewbox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></symbol>
+<symbol id="icon-globe" viewbox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"></path></symbol>
+<symbol id="icon-lock" viewbox="0 0 24 24"><rect height="10" rx="2" width="14" x="5" y="10"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></symbol>
+<symbol id="icon-warning" viewbox="0 0 24 24"><path d="M12 3 2.8 20h18.4L12 3Z"></path><path d="M12 9v5M12 17.5v.1"></path></symbol>
+<symbol id="icon-search" viewbox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 5 5"></path></symbol>
+<symbol id="icon-window" viewbox="0 0 24 24"><rect height="14" rx="2" width="18" x="3" y="5"></rect><path d="M3 9h18"></path></symbol>
+<symbol id="icon-incognito" viewbox="0 0 24 24"><path d="m5 10 2-5h10l2 5"></path><circle cx="8" cy="15" r="3"></circle><circle cx="16" cy="15" r="3"></circle><path d="M11 15h2"></path></symbol>
+<symbol id="icon-key" viewbox="0 0 24 24"><circle cx="8" cy="12" r="4"></circle><path d="M12 12h9M17 12v3M20 12v2"></path></symbol>
+<symbol id="icon-history" viewbox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v6h6M12 7v5l3 2"></path></symbol>
+<symbol id="icon-download" viewbox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 20h16"></path></symbol>
+<symbol id="icon-grid" viewbox="0 0 24 24"><rect height="6" rx="1" width="6" x="4" y="4"></rect><rect height="6" rx="1" width="6" x="14" y="4"></rect><rect height="6" rx="1" width="6" x="4" y="14"></rect><rect height="6" rx="1" width="6" x="14" y="14"></rect></symbol>
+<symbol id="icon-bolt" viewbox="0 0 24 24"><path d="m13 2-8 12h7l-1 8 8-12h-7l1-8Z"></path></symbol>
+<symbol id="icon-shield" viewbox="0 0 24 24"><path d="M12 3 20 6v6c0 5-3.4 8-8 9-4.6-1-8-4-8-9V6l8-3Z"></path><path d="m8.5 12 2.2 2.2 4.8-5"></path></symbol>
+<symbol id="icon-puzzle" viewbox="0 0 24 24"><path d="M8 4h4a2 2 0 1 1 4 0h4v5a2 2 0 1 0 0 4v7h-6a2 2 0 1 0-4 0H4v-6a2 2 0 1 1 0-4V4h4Z"></path></symbol>
+<symbol id="icon-trash" viewbox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"></path></symbol>
+<symbol id="icon-zoom" viewbox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 5 5M7.5 10.5h6"></path></symbol>
+<symbol id="icon-print" viewbox="0 0 24 24"><path d="M7 9V4h10v5M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"></path><rect height="6" width="10" x="7" y="14"></rect></symbol>
+<symbol id="icon-file-down" viewbox="0 0 24 24"><path d="M6 3h8l4 4v14H6V3Z"></path><path d="M14 3v5h5M12 11v6m-3-3 3 3 3-3"></path></symbol>
+<symbol id="icon-share" viewbox="0 0 24 24"><circle cx="18" cy="5" r="2.5"></circle><circle cx="6" cy="12" r="2.5"></circle><circle cx="18" cy="19" r="2.5"></circle><path d="m8.3 10.8 7.4-4.4M8.3 13.2l7.4 4.4"></path></symbol>
+<symbol id="icon-tools" viewbox="0 0 24 24"><path d="M14.5 6.5a4 4 0 0 0-5 5L3 18l3 3 6.5-6.5a4 4 0 0 0 5-5l-3 3-3-3 3-3Z"></path></symbol>
+<symbol id="icon-help" viewbox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M9.7 9a2.5 2.5 0 1 1 4.1 1.9c-1 .8-1.8 1.3-1.8 2.6M12 17.2v.1"></path></symbol>
+<symbol id="icon-settings" viewbox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V2.8h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"></path></symbol>
+<symbol id="icon-code" viewbox="0 0 24 24"><path d="m8 9-4 3 4 3M16 9l4 3-4 3M14 5l-4 14"></path></symbol>
+<symbol id="icon-exit" viewbox="0 0 24 24"><path d="M10 5H4v14h6M14 8l4 4-4 4M8 12h10"></path></symbol>
+<symbol id="icon-fullscreen" viewbox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"></path></symbol>
+<symbol id="icon-fullscreen-exit" viewbox="0 0 24 24"><path d="M3 8h5V3M21 8h-5V3M3 16h5v5M21 16h-5v5"></path></symbol>
+<symbol id="icon-volume" viewbox="0 0 24 24"><path d="M4 10v4h4l5 4V6l-5 4H4Z"></path><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"></path></symbol>
+<symbol id="icon-volume-off" viewbox="0 0 24 24"><path d="M4 10v4h4l5 4V6l-5 4H4Z"></path><path d="m17 10 4 4m0-4-4 4"></path></symbol>
+</svg>
+<header class="browser-toolbar">
+<section class="tab-bar">
+<div class="browser-brand">
+<img class="browser-logo" src="assets/branding/evasion-mark-64.png" alt="Evasion Browser">
+</div>
+<button aria-label="Scroll tabs left" class="tab-scroll-button" hidden="" id="scrollTabsLeftButton" title="Scroll tabs left" type="button"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-chevron-left"></use></svg></button>
+<div aria-label="Browser tabs" class="tabs-container" id="tabsContainer" role="tablist"></div>
+<button aria-label="Scroll tabs right" class="tab-scroll-button" hidden="" id="scrollTabsRightButton" title="Scroll tabs right" type="button"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-chevron-right"></use></svg></button>
+<button aria-label="Create a new tab" class="new-tab-button" id="newTabButton" title="New tab" type="button"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-plus"></use></svg></button>
+<button aria-controls="tabActionsMenu" aria-expanded="false" aria-label="Open tab actions" class="tab-actions-button" id="tabActionsButton" title="Tab actions" type="button"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-chevron-down"></use></svg></button>
+</section>
+<section class="navigation-row">
+<button aria-label="Go back" class="navigation-button" disabled="" id="backButton" title="Back" type="button"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-back"></use></svg></button>
+<button aria-label="Go forward" class="navigation-button" disabled="" id="forwardButton" title="Forward" type="button"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-forward"></use></svg></button>
+<button aria-label="Reload page" class="navigation-button" id="reloadButton" title="Reload" type="button"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-reload"></use></svg></button>
+<button aria-label="Open homepage" class="navigation-button" id="homeButton" title="Home" type="button"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-home"></use></svg></button>
+<form class="address-form" id="addressForm">
+<span class="security-icon" id="securityIcon" title="Website information"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-globe"></use></svg></span>
+<input aria-label="Website address" autocomplete="off" class="address-bar" id="addressBar" placeholder="Search the web or enter an address" spellcheck="false" type="text"/>
+<button class="go-button" id="goButton" title="Open address" type="submit">
+                    Go
+                </button>
+</form>
+<button aria-label="Bookmark this page" class="navigation-button" id="bookmarkButton" title="Bookmark this page" type="button"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-star"></use></svg></button>
+<button aria-controls="browserMenu" aria-expanded="false" aria-label="Open browser menu" class="navigation-button" id="menuButton" title="Browser menu" type="button"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-menu"></use></svg></button>
+</section>
+<div class="loading-bar" id="loadingBar"></div>
+</header>
+<div class="menu-overlay" hidden="" id="menuOverlay"></div>
+<aside aria-label="Browser menu" class="browser-menu" hidden="" id="browserMenu">
+<div class="menu-header">
+<button class="menu-profile" id="profileMenuButton" type="button" title="Open profile settings">
+<div class="menu-profile-avatar" id="menuProfileAvatar">E</div>
+<div class="menu-profile-text">
+<strong id="menuProfileName">Evasion Browser</strong>
+<span id="menuProfileEmail">Local profile</span>
+</div>
+</button>
+</div>
+<div class="menu-divider"></div>
+<button class="menu-item" id="newTabMenuItem" type="button">
+<span class="menu-icon"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-plus"></use></svg></span>
+<span class="menu-label">New tab</span>
+<span class="menu-shortcut">Ctrl+T</span>
+</button>
+<button class="menu-item" id="newWindowMenuItem" type="button">
+<span class="menu-icon"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-window"></use></svg></span>
+<span class="menu-label">New window</span>
+<span class="menu-shortcut">Ctrl+N</span>
+</button>
+<button class="menu-item" id="newIncognitoMenuItem" type="button">
+<span class="menu-icon"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-incognito"></use></svg></span>
+<span class="menu-label">
+                New incognito window
+            </span>
+<span class="menu-shortcut">
+                Ctrl+Shift+N
+            </span>
+</button>
+<div class="menu-divider"></div>
+<button class="menu-item" id="passwordsMenuItem" type="button">
+<span class="menu-icon"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-key"></use></svg></span>
+<span class="menu-label">
+                Passwords and autofill
+            </span>
+<span class="menu-arrow">›</span>
+</button>
+<button class="menu-item" id="historyMenuItem" type="button">
+<span class="menu-icon"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-history"></use></svg></span>
+<span class="menu-label">History</span>
+<span class="menu-shortcut">Ctrl+H</span>
+</button>
+<button class="menu-item" id="downloadsMenuItem" type="button">
+<span class="menu-icon"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-download"></use></svg></span>
+<span class="menu-label">Downloads</span>
+<span class="menu-shortcut">Ctrl+J</span>
+</button>
+<button class="menu-item" id="bookmarksMenuItem" type="button">
+<span class="menu-icon"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-star"></use></svg></span>
+<span class="menu-label">Bookmarks</span>
+<span class="menu-arrow">›</span>
+</button>
+<button class="menu-item" id="tabGroupsMenuItem" type="button">
+<span class="menu-icon"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-grid"></use></svg></span>
+<span class="menu-label">Tab groups</span>
+<span class="menu-arrow">›</span>
+</button>
+<button class="menu-item" id="gamingMenuItem" type="button">
+<span class="menu-icon"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-bolt"></use></svg></span>
+<span class="menu-label">Evasion Control</span>
+<span class="menu-arrow">›</span>
+</button>
+<button class="menu-item" id="securityMenuItem" type="button">
+<span class="menu-icon"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-shield"></use></svg></span>
+<span class="menu-label">Z+ Security Center</span>
+<span class="menu-arrow">›</span>
+</button>
+<button class="menu-item" id="extensionsMenuItem" type="button">
+<span class="menu-icon"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-puzzle"></use></svg></span>
+<span class="menu-label">Extensions</span>
+<span class="menu-arrow">›</span>
+</button>
+<button class="menu-item" id="clearDataMenuItem" type="button">
+<span class="menu-icon"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-trash"></use></svg></span>
+<span class="menu-label">
+                Delete browsing data
+            </span>
+<span class="menu-shortcut">
+                Ctrl+Shift+Del
+            </span>
+</button>
+<div class="menu-divider"></div>
+<div class="zoom-row">
+<span class="menu-icon"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-search"></use></svg></span>
+<span class="zoom-label">
+                Zoom
+            </span>
+<div class="zoom-controls">
+<button aria-label="Zoom out" class="zoom-button" id="zoomOutButton" title="Zoom out" type="button"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-zoom"></use></svg></button>
+<button class="zoom-value" id="zoomResetButton" title="Reset zoom" type="button">
+<span id="zoomValue">100%</span>
+</button>
+<button aria-label="Zoom in" class="zoom-button" id="zoomInButton" title="Zoom in" type="button">
+                    +
+                </button>
+<button aria-label="Toggle full screen" class="zoom-button" id="fullScreenButton" title="Full screen" type="button"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-fullscreen"></use></svg></button>
+</div>
+</div>
+<div class="menu-divider"></div>
+<button class="menu-item" id="printMenuItem" type="button">
+<span class="menu-icon"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-print"></use></svg></span>
+<span class="menu-label">Print</span>
+<span class="menu-shortcut">Ctrl+P</span>
+</button>
+<button class="menu-item" id="savePdfMenuItem" type="button">
+<span class="menu-icon"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-file-down"></use></svg></span>
+<span class="menu-label">
+                Save page as PDF
+            </span>
+</button>
+<button class="menu-item" id="findMenuItem" type="button">
+<span class="menu-icon"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-search"></use></svg></span>
+<span class="menu-label">Find on page</span>
+<span class="menu-shortcut">Ctrl+F</span>
+</button>
+<button class="menu-item" id="shareMenuItem" type="button">
+<span class="menu-icon"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-share"></use></svg></span>
+<span class="menu-label">Share</span>
+<span class="menu-arrow">›</span>
+</button>
+<button class="menu-item" id="evolutionMenuItem" type="button">
+<span class="menu-icon"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-bolt"></use></svg></span>
+<span class="menu-label">Evasion 3.0 Center</span>
+<span class="menu-arrow">›</span>
+</button>
+<button class="menu-item" id="advancedMenuItem" type="button">
+<span class="menu-icon"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-grid"></use></svg></span>
+<span class="menu-label">Evasion Nexus</span>
+<span class="menu-shortcut">Ctrl+Shift+P</span>
+</button>
+<button class="menu-item" id="moreToolsMenuItem" type="button">
+<span class="menu-icon"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-tools"></use></svg></span>
+<span class="menu-label">More tools</span>
+<span class="menu-arrow">›</span>
+</button>
+<div class="menu-divider"></div>
+<button class="menu-item" id="helpMenuItem" type="button">
+<span class="menu-icon"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-help"></use></svg></span>
+<span class="menu-label">Help</span>
+<span class="menu-arrow">›</span>
+</button>
+<button class="menu-item" id="settingsMenuItem" type="button">
+<span class="menu-icon"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-settings"></use></svg></span>
+<span class="menu-label">Settings</span>
+</button>
+<button class="menu-item" id="developerToolsMenuItem" type="button">
+<span class="menu-icon"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-code"></use></svg></span>
+<span class="menu-label">
+                Developer tools
+            </span>
+<span class="menu-shortcut">F12</span>
+</button>
+<button class="menu-item danger-item" id="exitMenuItem" type="button">
+<span class="menu-icon"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-exit"></use></svg></span>
+<span class="menu-label">Exit</span>
+</button>
+</aside>
+<aside aria-label="Tab menu" class="tab-context-menu" hidden="" id="tabContextMenu">
+<button class="context-menu-item" id="tabContextNewButton" type="button">
+<span>New tab</span>
+<span class="context-shortcut">Ctrl+T</span>
+</button>
+<button class="context-menu-item" id="tabContextReloadButton" type="button">
+<span>Reload</span>
+<span class="context-shortcut">Ctrl+R</span>
+</button>
+<button class="context-menu-item" id="tabContextDuplicateButton" type="button">
+<span>Duplicate tab</span>
+</button>
+<div class="context-menu-divider"></div>
+<button class="context-menu-item" id="tabContextCloseButton" type="button">
+<span>Close tab</span>
+<span class="context-shortcut">Ctrl+W</span>
+</button>
+<button class="context-menu-item" id="tabContextCloseOthersButton" type="button">
+<span>Close other tabs</span>
+</button>
+<button class="context-menu-item" id="tabContextCloseRightButton" type="button">
+<span>Close tabs to the right</span>
+</button>
+<div class="context-menu-divider"></div>
+<button class="context-menu-item" id="tabContextReopenButton" type="button">
+<span>Reopen closed tab</span>
+<span class="context-shortcut">
+                Ctrl+Shift+T
+            </span>
+</button>
+</aside>
+<aside aria-label="Tab actions" class="tab-actions-menu" hidden="" id="tabActionsMenu">
+<button class="context-menu-item" id="tabActionsNewButton" type="button">
+            New tab
+        </button>
+<button class="context-menu-item" id="tabActionsReopenButton" type="button">
+            Reopen closed tab
+        </button>
+<button class="context-menu-item" id="tabActionsDuplicateButton" type="button">
+            Duplicate current tab
+        </button>
+<div class="context-menu-divider"></div>
+<div class="tab-list-heading">
+            Open tabs
+        </div>
+<div class="open-tabs-list" id="openTabsList"></div>
+</aside>
+<section class="find-bar" hidden="" id="findBar">
+<input autocomplete="off" class="find-input" id="findInput" placeholder="Find on page" spellcheck="false" type="text"/>
+<span class="find-result-count" id="findResultCount">
+            0/0
+        </span>
+<button class="find-button" id="findPreviousButton" title="Previous result" type="button">
+            ↑
+        </button>
+<button class="find-button" id="findNextButton" title="Next result" type="button">
+            ↓
+        </button>
+<button class="find-button" id="findCloseButton" title="Close find bar" type="button">
+            ×
+        </button>
+</section>
+<template id="tabTemplate">
+<button aria-selected="false" class="browser-tab" draggable="true" role="tab" type="button">
+<span aria-hidden="true" class="tab-favicon">
+                🌐
+            </span>
+<span class="tab-title">
+                New Tab
+            </span>
+<span aria-hidden="true" class="tab-loading-indicator" hidden=""></span>
+<span aria-hidden="true" class="tab-audio-indicator" hidden=""><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-volume"></use></svg></span>
+<span aria-label="Close tab" class="tab-close-button" role="button" title="Close tab">
+                ×
+            </span>
+</button>
+</template>
+<template id="openTabListItemTemplate">
+<button class="open-tab-list-item" type="button">
+<span class="open-tab-favicon">
+                🌐
+            </span>
+<span class="open-tab-title">
+                New Tab
+            </span>
+<span class="open-tab-close">
+                ×
+            </span>
+</button>
+</template>
+<script src="renderer.js"></script>
+</body>
+</html>

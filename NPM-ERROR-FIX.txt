@@ -1,0 +1,33 @@
+CAUSE OF THE ERROR
+------------------
+The previous package-lock.json pointed to a private internal package registry:
+packages.applied-caas-gateway1.internal.api.openai.org
+
+That address is not reachable from your computer. npm timed out while downloading packages and then printed:
+"Exit handler never called!"
+
+THIS FIXED PROJECT
+------------------
+1. Uses https://registry.npmjs.org/ in package-lock.json.
+2. Includes a project .npmrc that forces the public npm registry.
+3. Includes repair-npm-and-install.bat.
+
+EASIEST INSTALL
+---------------
+Double-click repair-npm-and-install.bat
+
+MANUAL INSTALL
+--------------
+Open Command Prompt in this folder and run:
+
+npm config set registry https://registry.npmjs.org/
+npm cache clean --force
+npm ci --registry=https://registry.npmjs.org/ --no-audit --no-fund
+
+Then run:
+
+npm start
+
+To build Windows installer:
+
+npm run dist:win

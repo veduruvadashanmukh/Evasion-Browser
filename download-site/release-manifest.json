@@ -1,0 +1,56 @@
+{
+  "version": "1.0.0",
+  "channel": "Stable",
+  "downloads": [
+    {
+      "title": "Online Installer",
+      "label": "Small setup",
+      "platform": "Windows 10/11 \u00b7 x64 \u00b7 Internet required",
+      "platformKey": "windows",
+      "description": "Chrome-style lightweight setup that downloads and installs the latest Evasion Browser package.",
+      "file": "downloads/Evasion-Web-Setup-1.0.0.exe",
+      "sha256": "",
+      "available": false
+    },
+    {
+      "title": "Windows Installer",
+      "label": "for Windows",
+      "platform": "Windows 10/11 \u00b7 x64",
+      "platformKey": "windows",
+      "description": "Recommended setup wizard with desktop and Start Menu shortcuts.",
+      "file": "downloads/Evasion-Browser-1.0.0-win-x64.exe",
+      "sha256": "",
+      "available": false
+    },
+    {
+      "title": "Windows Portable",
+      "label": "Portable",
+      "platform": "Windows \u00b7 x64",
+      "platformKey": "windows",
+      "description": "Run Evasion without installation from a folder or USB drive.",
+      "file": "downloads/Evasion-Browser-1.0.0-win-x64-portable.exe",
+      "sha256": "",
+      "available": false
+    },
+    {
+      "title": "Linux AppImage",
+      "label": "AppImage",
+      "platform": "Linux \u00b7 x64",
+      "platformKey": "linux",
+      "description": "Portable AppImage build for supported Linux distributions.",
+      "file": "downloads/Evasion-Browser-1.0.0-linux-x64.AppImage",
+      "sha256": "",
+      "available": false
+    },
+    {
+      "title": "macOS",
+      "label": "for macOS",
+      "platform": "macOS",
+      "platformKey": "mac",
+      "description": "A signed and notarized macOS build is planned for a future release.",
+      "file": "",
+      "sha256": "",
+      "available": false
+    }
+  ]
+}

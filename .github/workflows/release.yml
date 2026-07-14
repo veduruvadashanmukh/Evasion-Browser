@@ -1,0 +1,129 @@
+name: Build Evasion Browser
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_pages:
+        description: "Deploy the download website to GitHub Pages"
+        required: false
+        default: false
+        type: boolean
+  push:
+    tags:
+      - "v*"
+
+concurrency:
+  group: evasion-build-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  windows:
+    name: Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          registry-url: https://registry.npmjs.org
+      - run: npm ci --no-audit --no-fund
+      - run: npm run check
+      - name: Build Windows
+        run: npx electron-builder --win --x64 --publish never
+      - run: npm run release:prepare
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Evasion-Windows
+          path: |
+            dist/*.exe
+            dist/*.blockmap
+            dist/*.yml
+            download-site/**
+          if-no-files-found: error
+          retention-days: 30
+      - name: Publish Windows release assets
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            dist/*.exe
+            dist/*.blockmap
+            dist/*.yml
+
+  linux:
+    name: Linux
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          registry-url: https://registry.npmjs.org
+      - run: npm ci --no-audit --no-fund
+      - run: npm run check
+      - name: Build Linux
+        run: npx electron-builder --linux AppImage deb --x64 --publish never
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Evasion-Linux
+          path: |
+            dist/*.AppImage
+            dist/*.deb
+            dist/*.yml
+          if-no-files-found: error
+          retention-days: 30
+      - name: Publish Linux release assets
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            dist/*.AppImage
+            dist/*.deb
+            dist/*.yml
+
+  online-installer:
+    name: Online installer
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: windows
+    runs-on: windows-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_REPOSITORY: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          registry-url: https://registry.npmjs.org
+      - run: npm ci --no-audit --no-fund
+      - run: npm run publish:web
+
+  pages:
+    name: GitHub Pages
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy_pages }}
+    needs: windows
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: Evasion-Windows
+          path: artifact
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: artifact/download-site
+      - id: deployment
+        uses: actions/deploy-pages@v4

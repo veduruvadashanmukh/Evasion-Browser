@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; object-src 'none'">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Evasion Profile</title>
+  <link rel="stylesheet" href="profile.css">
+</head>
+<body>
+  <div class="aurora a"></div><div class="aurora b"></div>
+  <main class="shell">
+    <section class="brand"><div class="brand-mark"><img src="../assets/branding/evasion-mark-64.png" alt="Evasion Browser"></div><div><b>EVASION</b><span>Private browser profile</span></div></section>
+
+    <section id="loadingView" class="panel center"><div class="spinner"></div><p>Preparing your profile…</p></section>
+
+    <section id="createView" class="panel" hidden>
+      <div class="hero"><div id="createAvatar" class="avatar">E</div><div><p class="kicker">FIRST-TIME SETUP</p><h1>Create your personal browser</h1><p>Your profile, preferences and vault stay protected on this computer.</p></div></div>
+      <form id="createForm" class="form-grid">
+        <label>Display name<input id="createName" maxlength="40" autocomplete="name" required placeholder="Your name"></label>
+        <label>Email <small>optional</small><input id="createEmail" type="email" maxlength="100" autocomplete="email" placeholder="name@example.com"></label>
+        <label>Password<input id="createPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="At least 8 characters"></label>
+        <label>Confirm password<input id="confirmPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="Repeat password"></label>
+        <label>Quick PIN <small>optional</small><input id="createPin" type="password" inputmode="numeric" maxlength="8" placeholder="4–8 digits"></label>
+        <label>Auto-lock<select id="createLock"><option value="10">10 minutes</option><option value="30" selected>30 minutes</option><option value="60">1 hour</option><option value="120">2 hours</option></select></label>
+        <div class="strength"><span id="strengthText">Password strength</span><i id="strengthBar"></i></div>
+        <label class="check"><input id="createRemember" type="checkbox"><span>Keep me signed in for 7 days on this computer</span></label>
+        <p id="createError" class="error" role="alert"></p>
+        <button class="primary" type="submit">Create and enter Evasion</button>
+      </form>
+    </section>
+
+    <section id="loginView" class="panel login" hidden>
+      <div id="loginAvatar" class="avatar large">E</div>
+      <p class="kicker">WELCOME BACK</p><h1 id="loginTitle">Unlock Evasion</h1><p id="loginEmail" class="muted"></p>
+      <form id="loginForm">
+        <div class="method-tabs"><button id="passwordTab" type="button" class="active">Password</button><button id="pinTab" type="button">PIN</button></div>
+        <label id="credentialLabel">Password<input id="credential" type="password" autocomplete="current-password" required autofocus></label>
+        <label class="check"><input id="loginRemember" type="checkbox"><span>Keep me signed in for 7 days</span></label>
+        <p id="loginError" class="error" role="alert"></p>
+        <button class="primary" type="submit">Unlock browser</button>
+      </form>
+      <p class="privacy">Your password is verified locally and is never sent online.</p>
+    </section>
+
+    <section id="manageView" class="panel" hidden>
+      <div class="hero"><div id="manageAvatar" class="avatar">E</div><div><p class="kicker">PROFILE SETTINGS</p><h1>Personalize your browser</h1><p>Update your identity and security preferences.</p></div></div>
+      <form id="manageForm" class="form-grid">
+        <label>Display name<input id="manageName" maxlength="40" required></label>
+        <label>Email<input id="manageEmail" type="email" maxlength="100"></label>
+        <label>Auto-lock<select id="manageLock"><option value="10">10 minutes</option><option value="30">30 minutes</option><option value="60">1 hour</option><option value="120">2 hours</option></select></label>
+        <label>Profile color<input id="manageColor" type="color"></label>
+        <p id="manageError" class="error"></p>
+        <div class="actions"><button id="lockNow" class="secondary" type="button">Lock now</button><button class="primary" type="submit">Save changes</button></div>
+      </form>
+      <details><summary>Change password</summary><form id="passwordForm" class="form-grid compact"><label>Current password<input id="currentPassword" type="password" required></label><label>New password<input id="newPassword" type="password" minlength="8" required></label><p id="passwordError" class="error"></p><button class="secondary" type="submit">Update password</button></form></details>
+      <details><summary>Set or remove quick PIN</summary><form id="pinForm" class="form-grid compact"><label>Current password<input id="pinPassword" type="password" required></label><label>New PIN <small>leave empty to remove</small><input id="newPin" type="password" inputmode="numeric" maxlength="8"></label><p id="pinError" class="error"></p><button class="secondary" type="submit">Update PIN</button></form></details>
+    </section>
+  </main>
+  <script src="profile.js"></script>
+</body>
+</html>

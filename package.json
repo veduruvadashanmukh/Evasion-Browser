@@ -1,0 +1,127 @@
+{
+  "name": "evasion-browser",
+  "version": "1.0.0",
+  "description": "Evasion Browser — a privacy-focused gaming and productivity desktop browser built with Electron.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "check": "node --check main.js && node --check preload.js && node --check renderer.js && node --check manager-preload.js && node --check profile-preload.js && node --check password-preload.js",
+    "pack": "electron-builder --dir --publish never",
+    "dist": "electron-builder --publish never",
+    "dist:win": "electron-builder --win --x64 --publish never",
+    "dist:linux": "electron-builder --linux AppImage deb --x64 --publish never",
+    "dist:mac": "electron-builder --mac dmg --publish never",
+    "release:prepare": "node scripts/copy-release-assets.js",
+    "download:serve": "node scripts/serve-download-site.js",
+    "release:win": "npm run check && npm run dist:win && npm run release:prepare",
+    "builder:check": "electron-builder --win --dir --publish never",
+    "dist:web": "electron-builder --config electron-builder.web.config.cjs --win nsis-web --x64 --publish never",
+    "dist:all-win": "npm run dist:win && npm run dist:web",
+    "release:web": "npm run check && npm run dist:web",
+    "release:all-win": "npm run check && npm run dist:all-win && npm run release:prepare",
+    "publish:web": "electron-builder --config electron-builder.web.config.cjs --win nsis-web --x64 --publish always"
+  },
+  "author": {
+    "name": "Veduruvada Shanmukh",
+    "email": "veduruvadashanmukh@gmail.com"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^43.1.0",
+    "electron-builder": "^26.0.12"
+  },
+  "productName": "Evasion Browser",
+  "build": {
+    "appId": "com.evasion.browser",
+    "productName": "Evasion Browser",
+    "copyright": "Copyright © 2026 Evasion Browser",
+    "asar": true,
+    "compression": "maximum",
+    "directories": {
+      "output": "dist",
+      "buildResources": "assets/branding"
+    },
+    "files": [
+      "**/*",
+      "!dist/**",
+      "!release/**",
+      "!node_modules/.cache/**",
+      "!*.zip",
+      "!*.log",
+      "!.vscode/**",
+      "!.git/**",
+      "!.github/**",
+      "!download-site/releases/**"
+    ],
+    "extraMetadata": {
+      "main": "main.js"
+    },
+    "artifactName": "Evasion-Browser-${version}-${os}-${arch}.${ext}",
+    "win": {
+      "icon": "assets/branding/evasion-icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "shortcutName": "Evasion Browser",
+      "uninstallDisplayName": "Evasion Browser",
+      "deleteAppDataOnUninstall": false,
+      "runAfterFinish": true,
+      "artifactName": "Evasion-Offline-Setup-${version}-${arch}.${ext}"
+    },
+    "linux": {
+      "icon": "assets/branding/evasion-mark-512.png",
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Network",
+      "synopsis": "Privacy-focused gaming and productivity browser",
+      "desktop": {
+        "entry": {
+          "Name": "Evasion Browser",
+          "Comment": "Privacy-focused gaming and productivity browser",
+          "Categories": "Network;WebBrowser;"
+        }
+      },
+      "maintainer": "Veduruvada Shanmukh <veduruvadashanmukh@gmail.com>",
+      "syncDesktopName": true,
+      "artifactName": "Evasion-Browser-${version}-linux-${arch}.${ext}"
+    },
+    "mac": {
+      "icon": "assets/branding/evasion-mark-512.png",
+      "target": [
+        "dmg"
+      ],
+      "category": "public.app-category.productivity"
+    },
+    "portable": {
+      "artifactName": "Evasion-Portable-${version}-${arch}.${ext}"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/veduruvadashanmukh/Evasion-Browser.git"
+  },
+  "homepage": "https://veduruvadashanmukh.github.io/Evasion-Browser/",
+  "bugs": {
+    "url": "https://github.com/veduruvadashanmukh/Evasion-Browser/issues"
+  },
+  "desktopName": "evasion-browser"
+}

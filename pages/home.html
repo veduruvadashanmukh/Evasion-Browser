@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self' data: https:; object-src 'none';">
+  <title>Evasion — New Tab</title>
+  <link rel="stylesheet" href="home.css">
+</head>
+<body>
+  <svg class="home-icon-sprite" aria-hidden="true" width="0" height="0"><symbol id="home-icon-focus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="home-icon-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol><symbol id="home-icon-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5"/></symbol><symbol id="home-icon-close" viewBox="0 0 24 24"><path d="m7 7 10 10M17 7 7 17"/></symbol></svg>
+  <div class="aurora aurora-one"></div>
+  <div class="aurora aurora-two"></div>
+  <div class="grid-overlay"></div>
+
+  <main class="shell">
+    <header class="topbar glass">
+      <div class="brand">
+        <div class="logo-wrap"><img class="logo-core" src="../assets/branding/evasion-mark-128.png" alt="Evasion Browser"></div>
+        <div><strong>EVASION</strong><span>Personal gaming and productivity browser</span></div>
+      </div>
+      <div class="top-actions">
+        <button id="profileButton" class="profile-button" type="button" title="Edit profile"><span id="profileAvatar">E</span><span id="profileName">Profile</span></button>
+        <button id="focusButton" class="icon-action" type="button" title="Focus mode"><svg class="home-ui-icon"><use href="#home-icon-focus"></use></svg></button>
+        <div class="date-pill"><span id="currentDate"></span></div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">EVASION START PAGE</span>
+        <h1 id="greeting">Welcome to Evasion</h1>
+        <p>Launch games, streams, tools and the web from one fast command center.</p>
+      </div>
+      <div class="clock-card glass">
+        <span class="clock-label">LOCAL TIME</span>
+        <strong id="currentTime">00:00</strong>
+        <small id="timeZoneLabel">India Standard Time</small>
+      </div>
+    </section>
+
+    <form id="searchForm" class="search-panel glass">
+      <span class="search-symbol"><svg class="home-ui-icon"><use href="#home-icon-search"></use></svg></span>
+      <input id="searchInput" type="text" placeholder="Search the web, games, streams or enter an address" autocomplete="off" spellcheck="false" aria-label="Search or enter a website address">
+      <button id="clearButton" class="clear-button" type="button" hidden><svg class="home-ui-icon"><use href="#home-icon-close"></use></svg></button>
+      <button class="search-button" type="submit"><span>GO</span><svg class="home-ui-icon"><use href="#home-icon-arrow"></use></svg></button>
+    </form>
+
+    <section class="content-grid">
+      <div class="main-column">
+        <div class="section-title"><div><span>QUICK LAUNCH</span><h2>Gaming & essentials</h2></div><small>One click away</small></div>
+        <div class="shortcut-grid">
+          <button class="shortcut neon-purple" data-url="https://discord.com/app"><span class="shortcut-logo"><img src="../assets/brands/discord.svg" alt="Discord"></span><span><strong>Discord</strong><small>Communities</small></span></button>
+          <button class="shortcut neon-violet" data-url="https://www.twitch.tv"><span class="shortcut-logo"><img src="../assets/brands/twitch.svg" alt="Twitch"></span><span><strong>Twitch</strong><small>Live streams</small></span></button>
+          <button class="shortcut neon-blue" data-url="https://store.steampowered.com"><span class="shortcut-logo"><img src="../assets/brands/steam.svg" alt="Steam"></span><span><strong>Steam</strong><small>Game library</small></span></button>
+          <button class="shortcut neon-red" data-url="https://www.youtube.com/gaming"><span class="shortcut-logo"><img src="../assets/brands/youtube.svg" alt="YouTube"></span><span><strong>YouTube Gaming</strong><small>Gaming videos</small></span></button>
+          <button class="shortcut neon-green" data-url="https://open.spotify.com"><span class="shortcut-logo"><img src="../assets/brands/spotify.svg" alt="Spotify"></span><span><strong>Spotify</strong><small>Music</small></span></button>
+          <button class="shortcut neon-cyan" data-url="https://github.com"><span class="shortcut-logo"><img src="../assets/brands/github.svg" alt="GitHub"></span><span><strong>GitHub</strong><small>Development</small></span></button>
+        </div>
+
+        <div class="section-title games-heading"><div><span>DISCOVER</span><h2>Gaming pulse</h2></div><small>Fast access</small></div>
+        <div class="news-grid">
+          <button class="feature-card card-twitch" data-url="https://www.twitch.tv/directory"><span class="feature-badge">LIVE</span><div><strong>Trending streams</strong><small>See what everyone is watching</small></div><b>→</b></button>
+          <button class="feature-card card-games" data-url="https://store.steampowered.com/explore/new/"><span class="feature-badge">NEW</span><div><strong>New game releases</strong><small>Fresh launches and upcoming titles</small></div><b>→</b></button>
+          <button class="feature-card card-cloud" data-url="https://www.xbox.com/play"><span class="feature-badge">CLOUD</span><div><strong>Xbox Cloud Gaming</strong><small>Jump into cloud games</small></div><b>→</b></button>
+        </div>
+      </div>
+
+      <aside class="side-column">
+        <section class="status-card glass">
+          <div class="status-head"><div><span>EVASION STATUS</span><h3>Performance mode</h3></div><span class="status-dot"></span></div>
+          <div class="meter-row"><span>Browser mode</span><strong id="performanceMode">Balanced</strong></div>
+          <div class="meter"><i style="width:72%"></i></div>
+          <div class="status-stats"><div><span>Focus</span><strong id="focusStatus">Off</strong></div><div><span>Theme</span><strong>Neon</strong></div></div>
+          <button class="gx-button" type="button" data-action="open-control">Open Evasion Control</button>
+        </section>
+
+        <section class="mini-tools glass">
+          <div class="section-title compact"><div><span>TOOLS</span><h3>Quick utilities</h3></div></div>
+          <div class="tool-grid">
+            <button type="button" data-url="https://web.whatsapp.com"><img src="../assets/brands/whatsapp.svg" alt="WhatsApp"><span>WhatsApp</span></button>
+            <button type="button" data-url="https://mail.google.com"><img src="../assets/brands/gmail.svg" alt="Gmail"><span>Gmail</span></button>
+            <button type="button" data-url="https://www.reddit.com/r/gaming"><img src="../assets/brands/reddit.svg" alt="Reddit"><span>Gaming</span></button>
+            <button type="button" data-url="https://chatgpt.com"><img src="../assets/brands/chatgpt.svg" alt="ChatGPT"><span>ChatGPT</span></button>
+          </div>
+        </section>
+      </aside>
+    </section>
+
+    <footer><span>EVASION</span><span>•</span><span>Play faster. Browse smarter.</span><span class="shortcut-tip">Press / to search</span></footer>
+  </main>
+
+  <section id="profileModal" class="profile-modal" hidden>
+    <form id="profileForm" class="profile-card glass">
+      <div class="profile-badge"><img src="../assets/branding/evasion-mark-128.png" alt="Evasion Browser"></div>
+      <span class="eyebrow">WELCOME TO EVASION</span>
+      <h2 id="profileTitle">Create your browser profile</h2>
+      <p>Your profile stays on this computer and personalizes the homepage.</p>
+      <label>Display name<input id="nameInput" maxlength="32" placeholder="Your name" required></label>
+      <label>Email <small>(optional)</small><input id="emailInput" type="email" maxlength="80" placeholder="name@example.com"></label>
+      <div class="profile-actions">
+        <button id="profileCancel" type="button" class="secondary-action">Cancel</button>
+        <button type="submit" class="primary-action">Save profile</button>
+      </div>
+    </form>
+  </section>
+  <script src="home.js"></script>
+</body>
+</html>

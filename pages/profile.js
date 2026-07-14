@@ -1,0 +1,35 @@
+const $ = (id) => document.getElementById(id);
+const api = window.profileAPI;
+const views = ['loadingView','createView','loginView','manageView'];
+let status = null, method = 'password';
+const show = (id) => views.forEach((name) => $(name).hidden = name !== id);
+const initials = (name) => String(name || 'E').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase() || 'E';
+const setAvatar = (node, profile) => { node.textContent = initials(profile?.name); node.style.background = `linear-gradient(135deg,${profile?.avatarColor || '#845cff'},#35dcff)`; };
+const error = (id, message='') => $(id).textContent = message;
+
+function strength(value){
+  let score=0; if(value.length>=8)score++; if(value.length>=12)score++; if(/[a-z]/.test(value)&&/[A-Z]/.test(value))score++; if(/\d/.test(value))score++; if(/[^\w\s]/.test(value))score++;
+  const pct=Math.min(100,score*20), colors=['#ff5f7c','#ff8a5b','#ffd166','#61d095','#35dcff'];
+  $('strengthBar').style.width=`${pct}%`; $('strengthBar').style.background=colors[Math.max(0,score-1)]; $('strengthText').textContent=['Very weak','Weak','Fair','Strong','Excellent'][Math.max(0,score-1)] || 'Password strength';
+}
+
+async function load(){
+  status=await api.status();
+  if(!status.exists){show('createView');$('createName').focus();return;}
+  if(status.unlocked){fillManage(status.profile);show('manageView');return;}
+  fillLogin(status.profile);show('loginView');$('credential').focus();
+}
+function fillLogin(profile){setAvatar($('loginAvatar'),profile);$('loginTitle').textContent=`Welcome back, ${profile?.name || 'User'}`;$('loginEmail').textContent=profile?.email || 'Your local Evasion profile';}
+function fillManage(profile){setAvatar($('manageAvatar'),profile);$('manageName').value=profile?.name||'';$('manageEmail').value=profile?.email||'';$('manageColor').value=profile?.avatarColor||'#845cff';$('manageLock').value=String(status.lockMinutes||30);}
+function setMethod(next){method=next;$('passwordTab').classList.toggle('active',method==='password');$('pinTab').classList.toggle('active',method==='pin');$('credentialLabel').firstChild.textContent=method==='pin'?'PIN':'Password';$('credential').value='';$('credential').inputMode=method==='pin'?'numeric':'text';$('credential').focus();}
+
+$('createName').addEventListener('input',()=>setAvatar($('createAvatar'),{name:$('createName').value}));
+$('createPassword').addEventListener('input',e=>strength(e.target.value));
+$('createForm').addEventListener('submit',async e=>{e.preventDefault();error('createError');if($('createPassword').value!==$('confirmPassword').value)return error('createError','Passwords do not match.');try{await api.create({name:$('createName').value,email:$('createEmail').value,password:$('createPassword').value,pin:$('createPin').value,lockMinutes:+$('createLock').value,remember:$('createRemember').checked});window.close();}catch(err){error('createError',err.message);}});
+$('passwordTab').onclick=()=>setMethod('password');$('pinTab').onclick=()=>setMethod('pin');
+$('loginForm').addEventListener('submit',async e=>{e.preventDefault();error('loginError');try{await api.login({method,credential:$('credential').value,remember:$('loginRemember').checked});window.close();}catch(err){error('loginError',err.message);$('credential').select();}});
+$('manageForm').addEventListener('submit',async e=>{e.preventDefault();error('manageError');try{status=await api.update({name:$('manageName').value,email:$('manageEmail').value,avatarColor:$('manageColor').value,lockMinutes:+$('manageLock').value});error('manageError','Saved successfully.');fillManage(status.profile);}catch(err){error('manageError',err.message);}});
+$('lockNow').onclick=async()=>{await api.lock(false);window.close();};
+$('passwordForm').addEventListener('submit',async e=>{e.preventDefault();error('passwordError');try{await api.changePassword({currentPassword:$('currentPassword').value,newPassword:$('newPassword').value});e.target.reset();error('passwordError','Password updated. Sign in again next time.');}catch(err){error('passwordError',err.message);}});
+$('pinForm').addEventListener('submit',async e=>{e.preventDefault();error('pinError');try{const hadPin=Boolean($('newPin').value);await api.setPin({password:$('pinPassword').value,pin:$('newPin').value});e.target.reset();error('pinError',hadPin?'PIN updated.':'PIN removed.');}catch(err){error('pinError',err.message);}});
+load().catch(err=>{show('loginView');error('loginError',err.message);});
