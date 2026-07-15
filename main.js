@@ -2774,16 +2774,16 @@ handle("manager-close", (event) => managerRecord(event).window.close());
 handle("settings-get", (event) => { managerRecord(event); return { ...browserSettings }; });
 handle("settings-update", async (event, patch = {}) => {
   managerRecord(event);
-  const allowed = new Set(["theme","searchEngine","customSearchUrl","startup","defaultZoom","downloadPath","askDownloadLocation","doNotTrack","blockTrackers","blockPopups","restoreSession","autoLockMinutes","showBookmarksBar","accentColor","performanceMode","memorySaver","cpuLimit","ramLimit","gamingSounds","animatedBackground","sidebarEnabled","focusMode","securityLevel","blockAds","blockFingerprinting","blockCryptominers","stripTrackingParams","blockThirdPartyCookies","httpsFirst","permissionProtection","sleepingTabsMinutes","streamingMode","gamingSessionMode","autoShredOnClose","lowMemoryMode","maxActiveTabs","autoUpdateEnabled","updateChannel","showWhatsNew"]);
+  const allowed = new Set(["theme","searchEngine","customSearchUrl","startup","defaultZoom","downloadPath","askDownloadLocation","doNotTrack","blockTrackers","blockPopups","restoreSession","showBookmarksBar","accentColor","performanceMode","memorySaver","cpuLimit","ramLimit","gamingSounds","animatedBackground","sidebarEnabled","focusMode","securityLevel","blockAds","blockFingerprinting","blockCryptominers","stripTrackingParams","blockThirdPartyCookies","httpsFirst","permissionProtection","sleepingTabsMinutes","streamingMode","gamingSessionMode","autoShredOnClose","lowMemoryMode","maxActiveTabs","autoUpdateEnabled","updateChannel","showWhatsNew"]);
   for (const [key, value] of Object.entries(patch)) if (allowed.has(key)) browserSettings[key] = value;
   browserSettings.defaultZoom = Math.max(50, Math.min(300, Number(browserSettings.defaultZoom) || 100));
-  browserSettings.autoLockMinutes = Math.max(1, Math.min(120, Number(browserSettings.autoLockMinutes) || 10));
+
   browserSettings.cpuLimit = Math.max(25, Math.min(100, Number(browserSettings.cpuLimit) || 80));
   browserSettings.ramLimit = Math.max(1024, Math.min(16384, Number(browserSettings.ramLimit) || 4096));
   browserSettings.sleepingTabsMinutes = Math.max(1, Math.min(240, Number(browserSettings.sleepingTabsMinutes) || 20));
   browserSettings.maxActiveTabs = Math.max(6, Math.min(100, Number(browserSettings.maxActiveTabs) || 24));
   browserStore.data.settings = { ...browserSettings };
-  vault?.setAutoLockMinutes(browserSettings.autoLockMinutes);
+
   await browserStore.save();
   applyPerformancePolicy();
   for (const ctx of contexts.values()) send(ctx, "browser-settings-updated", browserSettings);
@@ -3320,6 +3320,14 @@ function registerVaultHandlers() {
   vaultHandle("vault-generate", (options) => generatePassword(options));
   vaultHandle("vault-strength", (password) => strength(password));
   vaultHandle("vault-change-master", (payload) => vault.changeMasterPassword(payload?.currentPassword, payload?.newPassword));
+  vaultHandle("vault-reset", async (payload) => {
+    const confirmation = String(payload?.confirmation || "").trim();
+    if (confirmation !== "RESET") {
+      throw new Error("Type RESET exactly to confirm vault deletion.");
+    }
+    await vault.reset();
+    return { success: true };
+  });
   vaultHandle("vault-export", async () => {
     const result = await dialog.showSaveDialog(passwordWindow, {
       title: "Export encrypted vault",
@@ -3535,7 +3543,7 @@ app.whenReady().then(async () => {
   history.push(...browserStore.data.history.slice(-1000));
   for (const item of browserStore.data.bookmarks) if (item?.url) bookmarks.set(item.url, item);
   vault = new VaultService(app.getPath("userData"));
-  vault.setAutoLockMinutes(browserSettings.autoLockMinutes);
+
   registerVaultHandlers();
   profileService = new ProfileService(app.getPath("userData"));
   await profileService.init();

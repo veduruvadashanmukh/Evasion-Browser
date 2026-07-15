@@ -14,13 +14,11 @@ class VaultService {
     this.key = null;
     this.data = null;
     this.timer = null;
-    this.autoLockMs = 10 * 60 * 1000;
-  }
+}
 
   setAutoLockMinutes(minutes) {
     const value = Math.max(1, Math.min(120, Number(minutes) || 10));
-    this.autoLockMs = value * 60 * 1000;
-    this.touch();
+this.touch();
   }
 
   async exists() {

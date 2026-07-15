@@ -16,7 +16,7 @@ const DEFAULTS = {
     blockTrackers: true,
     blockPopups: true,
     restoreSession: true,
-    autoLockMinutes: 10,
+
     showBookmarksBar: false,
     accentColor: '#7c5cff',
     performanceMode: 'balanced',

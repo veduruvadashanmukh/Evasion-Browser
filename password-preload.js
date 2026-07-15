@@ -16,5 +16,6 @@ contextBridge.exposeInMainWorld('vaultAPI', {
   strength: (password) => invoke('vault-strength', password),
   exportVault: () => invoke('vault-export'),
   importVault: () => invoke('vault-import'),
-  changeMasterPassword: (currentPassword, newPassword) => invoke('vault-change-master', { currentPassword, newPassword })
+  changeMasterPassword: (currentPassword, newPassword) => invoke('vault-change-master', { currentPassword, newPassword }),
+  resetVault: (confirmation) => invoke('vault-reset', { confirmation })
 });

@@ -22,7 +22,7 @@
         <label>Password<input id="createPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="8+ characters, with a letter and number"><small class="password-rules">Use 8 or more characters, at least one letter and one number. Uppercase and symbols are recommended.</small></label>
         <label>Confirm password<input id="confirmPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="Repeat password"></label>
         <label>Quick PIN <small>optional</small><input id="createPin" type="password" inputmode="numeric" maxlength="8" placeholder="4–8 digits"></label>
-        <label>Auto-lock<select id="createLock"><option value="10">10 minutes</option><option value="30" selected>30 minutes</option><option value="60">1 hour</option><option value="120">2 hours</option></select></label>
+        
         <div class="strength"><span id="strengthText">Password strength</span><i id="strengthBar"></i></div>
         <label class="check"><input id="createRemember" type="checkbox"><span>Keep me signed in for 7 days on this computer</span></label>
         <p id="createError" class="error" role="alert"></p>
@@ -48,7 +48,7 @@
       <form id="manageForm" class="form-grid">
         <label>Display name<input id="manageName" maxlength="40" required></label>
         <label>Email<input id="manageEmail" type="email" maxlength="100"></label>
-        <label>Auto-lock<select id="manageLock"><option value="10">10 minutes</option><option value="30">30 minutes</option><option value="60">1 hour</option><option value="120">2 hours</option></select></label>
+        
         <label>Profile color<input id="manageColor" type="color"></label>
         <p id="manageError" class="error"></p>
         <div class="actions"><button id="lockNow" class="secondary" type="button">Lock now</button><button class="primary" type="submit">Save changes</button></div>
