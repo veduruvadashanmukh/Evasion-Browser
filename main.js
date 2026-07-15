@@ -133,8 +133,17 @@ function broadcastUpdaterState(extra = {}) {
   Object.assign(updaterState, extra);
   const payload = { ...updaterState };
   for (const ctx of contexts.values()) send(ctx, "browser-update-status", payload);
-  for (const win of managerWindows.values()) {
-    if (win && !win.isDestroyed()) win.webContents.send("manager-update-status", payload);
+  for (const record of managerWindows.values()) {
+    const win = record?.window || record;
+    if (
+      win &&
+      typeof win.isDestroyed === "function" &&
+      !win.isDestroyed() &&
+      win.webContents &&
+      !win.webContents.isDestroyed()
+    ) {
+      win.webContents.send("manager-update-status", payload);
+    }
   }
   return payload;
 }
