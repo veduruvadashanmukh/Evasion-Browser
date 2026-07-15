@@ -304,6 +304,13 @@ function createURL(input) {
     return HOME_URL;
   }
 
+  // Preserve trusted local browser pages. Without this check, a file URL
+  // such as file:///.../incognito.html is incorrectly changed to
+  // https://file:///..., which produces a blank startup tab.
+  if (value === HOME_URL || value === INCOGNITO_HOME_URL) {
+    return value;
+  }
+
   if (/^https?:\/\//i.test(value)) {
     return value;
   }
@@ -585,7 +592,7 @@ async function navigateTab(
     destination = destination.replace(/^http:/i, "https:");
   }
 
-  if (destination === HOME_URL) {
+  if (destination === HOME_URL || destination === INCOGNITO_HOME_URL) {
     return loadHome(tab, ctx);
   }
 
