@@ -83,6 +83,12 @@
 </section>
 <div class="loading-bar" id="loadingBar"></div>
 </header>
+<section id="updateBanner" class="update-banner" hidden>
+  <div><strong id="updateBannerTitle">Evasion update available</strong><span id="updateBannerText"></span></div>
+  <button id="updateNowButton" type="button">Update now</button>
+  <button id="updateLaterButton" type="button" aria-label="Dismiss update">×</button>
+</section>
+
 <div class="menu-overlay" hidden="" id="menuOverlay"></div>
 <aside aria-label="Browser menu" class="browser-menu" hidden="" id="browserMenu">
 <div class="menu-header">
@@ -225,6 +231,11 @@
 <span class="menu-icon"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-help"></use></svg></span>
 <span class="menu-label">Help</span>
 <span class="menu-arrow">›</span>
+</button>
+
+<button class="menu-item" id="updatesMenuItem" type="button">
+<span class="menu-icon"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-download"></use></svg></span>
+<span class="menu-label">Updates &amp; What’s New</span><span class="menu-arrow">›</span>
 </button>
 <button class="menu-item" id="settingsMenuItem" type="button">
 <span class="menu-icon"><svg aria-hidden="true" class="ui-icon" focusable="false"><use href="#icon-settings"></use></svg></span>

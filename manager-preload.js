@@ -2,6 +2,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 const invoke = (channel, ...args) => ipcRenderer.invoke(channel, ...args);
 contextBridge.exposeInMainWorld('managerAPI', {
   getContext: () => invoke('manager-context'), close: () => invoke('manager-close'),
+  checkUpdates: () => invoke('updates-get'), openUpdateURL: (url) => invoke('updates-open-url', url),
   getSettings: () => invoke('settings-get'), updateSettings: (patch) => invoke('settings-update', patch),
   chooseDownloadFolder: () => invoke('settings-choose-download-folder'), clearBrowsingData: () => invoke('settings-clear-data'),
   getExtensions: () => invoke('extensions-list'), loadExtension: () => invoke('extensions-load'), removeExtension: (id) => invoke('extensions-remove', id), reloadExtension: (id) => invoke('extensions-reload', id),

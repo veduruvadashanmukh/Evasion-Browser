@@ -6,7 +6,8 @@ const el = Object.fromEntries([
   "addressForm addressBar backButton forwardButton reloadButton homeButton bookmarkButton menuButton securityIcon loadingBar",
   "tabsContainer newTabButton tabTemplate scrollTabsLeftButton scrollTabsRightButton tabActionsButton",
   "browserMenu menuOverlay profileMenuButton menuProfileAvatar menuProfileName menuProfileEmail newTabMenuItem newWindowMenuItem newIncognitoMenuItem passwordsMenuItem historyMenuItem downloadsMenuItem bookmarksMenuItem tabGroupsMenuItem gamingMenuItem securityMenuItem extensionsMenuItem clearDataMenuItem",
-  "zoomOutButton zoomResetButton zoomInButton zoomValue fullScreenButton printMenuItem savePdfMenuItem findMenuItem shareMenuItem evolutionMenuItem advancedMenuItem moreToolsMenuItem helpMenuItem settingsMenuItem developerToolsMenuItem exitMenuItem",
+  "zoomOutButton zoomResetButton zoomInButton zoomValue fullScreenButton printMenuItem savePdfMenuItem findMenuItem shareMenuItem evolutionMenuItem advancedMenuItem moreToolsMenuItem helpMenuItem updatesMenuItem settingsMenuItem developerToolsMenuItem exitMenuItem",
+  "updateBanner updateBannerTitle updateBannerText updateNowButton updateLaterButton",
   "findBar findInput findResultCount findPreviousButton findNextButton findCloseButton",
   "tabContextMenu tabContextNewButton tabContextReloadButton tabContextDuplicateButton tabContextCloseButton tabContextCloseOthersButton tabContextCloseRightButton tabContextReopenButton",
   "tabActionsMenu tabActionsNewButton tabActionsReopenButton tabActionsDuplicateButton openTabsList openTabListItemTemplate"
@@ -235,7 +236,7 @@ window.addEventListener("resize", updateTabScrollButtons);
 const actionBindings = [
   [el.newTabMenuItem, () => api.newTab()], [el.newWindowMenuItem, () => api.newWindow()], [el.newIncognitoMenuItem, () => api.newIncognitoWindow()],
   [el.historyMenuItem, () => api.openHistory()], [el.downloadsMenuItem, () => api.openDownloads()], [el.bookmarksMenuItem, () => api.openBookmarks()],
-  [el.settingsMenuItem, () => api.openSettings()], [el.helpMenuItem, () => api.openHelp()], [el.passwordsMenuItem, () => api.openPasswords()],
+  [el.updatesMenuItem, () => api.openUpdates()], [el.settingsMenuItem, () => api.openSettings()], [el.helpMenuItem, () => api.openHelp()], [el.passwordsMenuItem, () => api.openPasswords()],
   [el.extensionsMenuItem, () => api.openExtensions()], [el.tabGroupsMenuItem, () => api.openTabGroups()], [el.gamingMenuItem, () => api.openGaming()], [el.securityMenuItem, () => api.openSecurity()], [el.printMenuItem, () => api.printPage()],
   [el.savePdfMenuItem, () => api.savePageAsPDF()], [el.shareMenuItem, () => api.sharePage()], [el.developerToolsMenuItem, () => api.openDeveloperTools()],
   [el.evolutionMenuItem, () => api.openEvolution()], [el.advancedMenuItem, () => api.openAdvanced()], [el.moreToolsMenuItem, () => api.openTools()], [el.clearDataMenuItem, () => api.clearBrowsingData()]
@@ -335,3 +336,17 @@ api.onSettingsUpdated?.((settings) => {
   const tab = await safe(() => api.getActiveTab(), "Could not obtain active tab:");
   if (tab) { activeTabId = tab.id; applyState(tab); }
 })();
+
+let pendingUpdate = null;
+function showUpdateBanner(info) {
+  if (!info?.updateAvailable || !el.updateBanner) return;
+  pendingUpdate = info;
+  el.updateBannerTitle.textContent = `Evasion ${info.latestVersion} is available`;
+  el.updateBannerText.textContent = `You are using ${info.currentVersion}. Download the latest secure release.`;
+  el.updateBanner.hidden = false;
+  api.setOverlayVisible(true);
+}
+el.updateNowButton?.addEventListener("click", () => pendingUpdate && api.openUpdateDownload(pendingUpdate.downloadUrl));
+el.updateLaterButton?.addEventListener("click", () => { el.updateBanner.hidden = true; api.setOverlayVisible(false); });
+api.onUpdateAvailable(showUpdateBanner);
+setTimeout(async () => { const info = await safe(() => api.checkForUpdates()); showUpdateBanner(info); }, 5000);

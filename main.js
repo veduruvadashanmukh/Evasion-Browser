@@ -20,6 +20,49 @@ const { VaultService, generatePassword, strength } = require("./password-manager
 const { BrowserStore } = require("./browser-store");
 const { ProfileService } = require("./profile-service");
 
+
+const UPDATE_REPOSITORY = "veduruvadashanmukh/Evasion-Browser";
+const UPDATE_RELEASES_URL = `https://github.com/${UPDATE_REPOSITORY}/releases`;
+
+function versionParts(value) {
+  return String(value || "0").replace(/^v/i, "").split(".").map((part) => Number.parseInt(part, 10) || 0);
+}
+
+function isNewerVersion(candidate, current = app.getVersion()) {
+  const next = versionParts(candidate);
+  const now = versionParts(current);
+  for (let index = 0; index < Math.max(next.length, now.length); index += 1) {
+    const difference = (next[index] || 0) - (now[index] || 0);
+    if (difference !== 0) return difference > 0;
+  }
+  return false;
+}
+
+async function fetchUpdateInfo() {
+  try {
+    const response = await net.fetch(`https://api.github.com/repos/${UPDATE_REPOSITORY}/releases/latest`, {
+      headers: { "User-Agent": "Evasion-Browser-Updater", Accept: "application/vnd.github+json" }
+    });
+    if (!response.ok) throw new Error(`GitHub returned ${response.status}`);
+    const release = await response.json();
+    const version = String(release.tag_name || "").replace(/^v/i, "");
+    const assets = Array.isArray(release.assets) ? release.assets : [];
+    const preferredAsset = assets.find((asset) => /Offline-Setup.*x64\.exe$/i.test(asset.name))
+      || assets.find((asset) => /Setup.*\.exe$/i.test(asset.name))
+      || assets.find((asset) => /Portable.*\.exe$/i.test(asset.name));
+    return {
+      success: true, currentVersion: app.getVersion(), latestVersion: version || app.getVersion(),
+      updateAvailable: Boolean(version) && isNewerVersion(version),
+      name: release.name || `Evasion Browser ${version}`, notes: release.body || "Performance, privacy and interface improvements.",
+      publishedAt: release.published_at || null,
+      downloadUrl: preferredAsset?.browser_download_url || release.html_url || UPDATE_RELEASES_URL,
+      releaseUrl: release.html_url || UPDATE_RELEASES_URL
+    };
+  } catch (error) {
+    return { success: false, currentVersion: app.getVersion(), latestVersion: app.getVersion(), updateAvailable: false, error: error.message, releaseUrl: UPDATE_RELEASES_URL };
+  }
+}
+
 const APP_ICON = process.platform === "win32"
   ? path.join(__dirname, "assets", "branding", "evasion-icon.ico")
   : path.join(__dirname, "assets", "branding", "evasion-mark-512.png");
@@ -2425,7 +2468,8 @@ const MANAGER_PAGES = {
   security: "security.html",
   tools: "tools.html",
   evolution: "evolution.html",
-  advanced: "advanced.html"
+  advanced: "advanced.html",
+  updates: "updates.html"
 };
 
 function managerRecord(event) {
@@ -2439,8 +2483,8 @@ function openManagerWindow(type, ctx) {
   if (existing) { existing.window.show(); existing.window.focus(); return { success: true }; }
   const win = new BrowserWindow({
     icon: APP_ICON,
-    width: ["settings","gaming","security","tools","evolution","advanced"].includes(type) ? 1120 : 1050, height: 760, minWidth: 720, minHeight: 520,
-    title: `${type === "tab-groups" ? "Tab Groups" : type === "gaming" ? "Evasion Control" : type === "security" ? "Z+ Security Center" : type === "tools" ? "Evasion Ultimate Center" : type === "evolution" ? "Evasion 3.0 Center" : type === "advanced" ? "Evasion Nexus" : type[0].toUpperCase()+type.slice(1)} — Evasion Browser`,
+    width: ["settings","gaming","security","tools","evolution","advanced","updates"].includes(type) ? 1120 : 1050, height: 760, minWidth: 720, minHeight: 520,
+    title: `${type === "tab-groups" ? "Tab Groups" : type === "gaming" ? "Evasion Control" : type === "security" ? "Z+ Security Center" : type === "tools" ? "Evasion Ultimate Center" : type === "evolution" ? "Evasion 3.0 Center" : type === "advanced" ? "Evasion Nexus" : type === "updates" ? "Updates & What’s New" : type[0].toUpperCase()+type.slice(1)} — Evasion Browser`,
     parent: windowReady(ctx) ? ctx.window : undefined, show: false, backgroundColor: "#eef3ff",
     webPreferences: { preload: path.join(__dirname, "manager-preload.js"), nodeIntegration: false, contextIsolation: true, sandbox: true }
   });
@@ -3193,6 +3237,25 @@ function registerProfileHandlers() {
   });
 }
 
+
+/* Updates and release notifications */
+handle("browser-check-update", async () => fetchUpdateInfo());
+handle("browser-open-updates", (event) => openManagerWindow("updates", ctxFrom(event)));
+handle("browser-open-update-download", async (_event, url) => {
+  const target = String(url || UPDATE_RELEASES_URL);
+  if (!target.startsWith("https://github.com/")) throw new Error("Update URL was blocked.");
+  await shell.openExternal(target);
+  return { success: true };
+});
+handle("updates-get", (event) => { managerRecord(event); return fetchUpdateInfo(); });
+handle("updates-open-url", async (event, url) => {
+  managerRecord(event);
+  const target = String(url || UPDATE_RELEASES_URL);
+  if (!target.startsWith("https://github.com/")) throw new Error("Update URL was blocked.");
+  await shell.openExternal(target);
+  return { success: true };
+});
+
 /* App startup */
 
 app.setName("Evasion Browser");
@@ -3229,6 +3292,13 @@ app.whenReady().then(async () => {
   }
   if (profileService.unlocked) createWindow();
   else openProfileWindow();
+  setTimeout(async () => {
+    const info = await fetchUpdateInfo();
+    if (info.updateAvailable) {
+      for (const ctx of contexts.values()) send(ctx, "browser-update-available", info);
+    }
+  }, 12000).unref?.();
+
 
   app.on(
     "activate",

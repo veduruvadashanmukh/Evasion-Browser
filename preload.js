@@ -117,6 +117,10 @@ contextBridge.exposeInMainWorld("browserAPI", {
     openExtensions: () =>
         invoke("browser-open-extensions"),
 
+    checkForUpdates: () => invoke("browser-check-update"),
+    openUpdates: () => invoke("browser-open-updates"),
+    openUpdateDownload: (url) => invoke("browser-open-update-download", url),
+
     openTabGroups: () =>
         invoke("browser-open-tab-groups"),
 
@@ -273,6 +277,8 @@ contextBridge.exposeInMainWorld("browserAPI", {
             "browser-settings-updated",
             callback
         ),
+    onUpdateAvailable: (callback) => listen("browser-update-available", callback),
+
     onBookmarkUpdated: (callback) =>
         listen(
             "browser-bookmark-updated",
