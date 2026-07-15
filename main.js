@@ -15,7 +15,7 @@ const path = require("path");
 const os = require("os");
 const crypto = require("crypto");
 const fs = require("fs/promises");
-const { pathToFileURL } = require("url");
+const { pathToFileURL, fileURLToPath } = require("url");
 const { VaultService, generatePassword, strength } = require("./password-manager/vault-service");
 const { BrowserStore } = require("./browser-store");
 const { ProfileService } = require("./profile-service");
@@ -296,6 +296,45 @@ function isHomeRequest(value) {
   ].includes(input);
 }
 
+function isTrustedLocalBrowserPage(value) {
+  try {
+    const url = new URL(String(value || ""));
+    if (url.protocol !== "file:") return false;
+
+    const requestedPath = path.normalize(fileURLToPath(url));
+    return (
+      requestedPath === path.normalize(HOME_FILE) ||
+      requestedPath === path.normalize(INCOGNITO_HOME_FILE)
+    );
+  } catch {
+    return false;
+  }
+}
+
+function isHomePageURL(value) {
+  try {
+    const url = new URL(String(value || ""));
+    return (
+      url.protocol === "file:" &&
+      path.normalize(fileURLToPath(url)) === path.normalize(HOME_FILE)
+    );
+  } catch {
+    return false;
+  }
+}
+
+function isIncognitoHomePageURL(value) {
+  try {
+    const url = new URL(String(value || ""));
+    return (
+      url.protocol === "file:" &&
+      path.normalize(fileURLToPath(url)) === path.normalize(INCOGNITO_HOME_FILE)
+    );
+  } catch {
+    return false;
+  }
+}
+
 function createURL(input) {
   const value =
     String(input || "").trim();
@@ -304,10 +343,9 @@ function createURL(input) {
     return HOME_URL;
   }
 
-  // Preserve trusted local browser pages. Without this check, a file URL
-  // such as file:///.../incognito.html is incorrectly changed to
-  // https://file:///..., which produces a blank startup tab.
-  if (value === HOME_URL || value === INCOGNITO_HOME_URL) {
+  // Preserve trusted local browser pages, including profile query
+  // parameters such as home.html?profileName=...
+  if (isTrustedLocalBrowserPage(value)) {
     return value;
   }
 
@@ -341,7 +379,7 @@ function isAllowedURL(value) {
       url.protocol === "https:" ||
       (
         url.protocol === "file:" &&
-        (url.href === HOME_URL || url.href === INCOGNITO_HOME_URL)
+        isTrustedLocalBrowserPage(url.href)
       )
     );
   } catch {
@@ -592,7 +630,7 @@ async function navigateTab(
     destination = destination.replace(/^http:/i, "https:");
   }
 
-  if (destination === HOME_URL || destination === INCOGNITO_HOME_URL) {
+  if (isHomePageURL(destination) || isIncognitoHomePageURL(destination)) {
     return loadHome(tab, ctx);
   }
 
@@ -1579,7 +1617,7 @@ function wakeTab(ctx, tabId) {
   tab.sleeping = false;
   tab.sleepURL = "";
   tab.view.webContents.setAudioMuted(false);
-  if (url === HOME_URL || url === INCOGNITO_HOME_URL) loadHome(tab, ctx);
+  if (isHomePageURL(url) || isIncognitoHomePageURL(url)) loadHome(tab, ctx);
   else tab.view.webContents.loadURL(url).catch(() => {});
   sendTabs(ctx);
   return { success: true, tabId: tab.id };
