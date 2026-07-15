@@ -9,6 +9,7 @@ contextBridge.exposeInMainWorld('managerAPI', {
   getTabGroups: () => invoke('groups-get'), createGroup: (group) => invoke('groups-create', group), updateGroup: (id, patch) => invoke('groups-update', { id, patch }), deleteGroup: (id) => invoke('groups-delete', id), assignTab: (tabId, groupId) => invoke('groups-assign-tab', { tabId, groupId }), ungroupTab: (tabId) => invoke('groups-assign-tab', { tabId, groupId: null }),
   getSecurity: () => invoke('security-get'), resetSecurityStats: () => invoke('security-reset-stats'),
   getPerformanceMetrics: () => invoke('gaming-metrics'), getGamingData: () => invoke('gaming-data'),
+  getQuickLaunch: () => invoke('quick-launch-get'), saveQuickLaunch: (items) => invoke('quick-launch-save', items), resetQuickLaunch: () => invoke('quick-launch-reset'),
   saveWorkspace: (name) => invoke('gaming-save-workspace', name), openWorkspace: (id) => invoke('gaming-open-workspace', id), deleteWorkspace: (id) => invoke('gaming-delete-workspace', id),
   addNote: (text) => invoke('gaming-add-note', text), deleteNote: (id) => invoke('gaming-delete-note', id),
   openURL: (url) => invoke('gaming-open-url', url), toggleMute: () => invoke('gaming-toggle-mute'), takeScreenshot: () => invoke('gaming-screenshot'), readerMode: () => invoke('gaming-reader-mode'),

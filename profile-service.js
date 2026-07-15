@@ -72,10 +72,11 @@ class ProfileService {
 
   validatePassword(password) {
     const value = String(password || '');
-    if (value.length < 8) throw new Error('Password must contain at least 8 characters.');
-    if (!/[a-z]/.test(value) || !/[A-Z]/.test(value) || !/\d/.test(value)) {
-      throw new Error('Use uppercase, lowercase and a number in your password.');
+    if (value.length < 8) throw new Error('Use at least 8 characters.');
+    if (!/[A-Za-z]/.test(value) || !/\d/.test(value)) {
+      throw new Error('Include at least one letter and one number.');
     }
+    if (/\s/.test(value)) throw new Error('Password cannot contain spaces.');
   }
 
   async create(input = {}) {

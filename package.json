@@ -1,6 +1,6 @@
 {
   "name": "evasion-browser",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Evasion Browser — a privacy-focused gaming and productivity desktop browser built with Electron.",
   "main": "main.js",
   "scripts": {
@@ -83,7 +83,8 @@
       "uninstallDisplayName": "Evasion Browser",
       "deleteAppDataOnUninstall": false,
       "runAfterFinish": true,
-      "artifactName": "Evasion-Offline-Setup-${version}-${arch}.${ext}"
+      "artifactName": "Evasion-Offline-Setup-${version}-${arch}.${ext}",
+      "include": "build/installer.nsh"
     },
     "linux": {
       "icon": "assets/branding/evasion-mark-512.png",

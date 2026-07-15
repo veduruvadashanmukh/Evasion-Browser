@@ -39,8 +39,18 @@ const DEFAULTS = {
     sleepingTabsMinutes: 20,
     streamingMode: false,
     gamingSessionMode: false,
-    autoShredOnClose: false
+    autoShredOnClose: false,
+    lowMemoryMode: false,
+    maxActiveTabs: 24
   },
+  quickLaunch: [
+    { id: 'discord', name: 'Discord', url: 'https://discord.com/app' },
+    { id: 'youtube', name: 'YouTube', url: 'https://www.youtube.com' },
+    { id: 'gmail', name: 'Gmail', url: 'https://mail.google.com' },
+    { id: 'github', name: 'GitHub', url: 'https://github.com' },
+    { id: 'chatgpt', name: 'ChatGPT', url: 'https://chatgpt.com' },
+    { id: 'spotify', name: 'Spotify', url: 'https://open.spotify.com' }
+  ],
   bookmarks: [],
   history: [],
   sessionTabs: [],
@@ -81,6 +91,7 @@ class BrowserStore {
         ...structuredClone(DEFAULTS),
         ...parsed,
         settings: { ...DEFAULTS.settings, ...(parsed.settings || {}) },
+        quickLaunch: Array.isArray(parsed.quickLaunch) ? parsed.quickLaunch : structuredClone(DEFAULTS.quickLaunch),
         bookmarks: Array.isArray(parsed.bookmarks) ? parsed.bookmarks : [],
         history: Array.isArray(parsed.history) ? parsed.history : [],
         sessionTabs: Array.isArray(parsed.sessionTabs) ? parsed.sessionTabs : [],

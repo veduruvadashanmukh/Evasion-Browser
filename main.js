@@ -1020,6 +1020,7 @@ function createTab(
         contextIsolation: true,
         sandbox: true,
         webSecurity: true,
+        backgroundThrottling: performancePolicy().backgroundThrottling,
         session: ctx.session
       }
     })
@@ -1391,6 +1392,43 @@ function moveTab(
   };
 }
 
+
+
+function performancePolicy() {
+  const totalGB = os.totalmem() / 1073741824;
+  const mode = ["eco","balanced","turbo"].includes(browserSettings.performanceMode)
+    ? browserSettings.performanceMode : "balanced";
+  const lowMemory = Boolean(browserSettings.lowMemoryMode) || totalGB <= 4.5;
+  const policies = {
+    eco: { sleepMinutes: 2, backgroundThrottling: true, maxAwakeTabs: lowMemory ? 4 : 8 },
+    balanced: { sleepMinutes: lowMemory ? 5 : 15, backgroundThrottling: true, maxAwakeTabs: lowMemory ? 6 : 14 },
+    turbo: { sleepMinutes: lowMemory ? 10 : 30, backgroundThrottling: false, maxAwakeTabs: lowMemory ? 8 : 24 }
+  };
+  return { mode, lowMemory, ...policies[mode] };
+}
+
+function applyPerformancePolicy(ctx = null) {
+  const policy = performancePolicy();
+  const targets = ctx ? [ctx] : [...contexts.values()];
+  for (const current of targets) {
+    if (!windowReady(current)) continue;
+    for (const tab of current.tabs.values()) {
+      if (!tabReady(tab)) continue;
+      try { tab.view.webContents.setBackgroundThrottling(policy.backgroundThrottling); } catch {}
+    }
+    if (browserSettings.memorySaver) {
+      sleepInactiveTabs(current, Math.min(Number(browserSettings.sleepingTabsMinutes || policy.sleepMinutes), policy.sleepMinutes));
+      const awake = [...current.tabs.values()]
+        .filter((tab) => tabReady(tab) && !tab.sleeping && tab.id !== current.activeTabId)
+        .sort((a,b)=>(a.lastActiveAt||0)-(b.lastActiveAt||0));
+      while (awake.length > policy.maxAwakeTabs - 1) {
+        const tab = awake.shift();
+        if (tab) sleepTab(current, tab.id);
+      }
+    }
+  }
+  return policy;
+}
 
 function sleepTab(ctx, tabId) {
   const tab = ctx?.tabs.get(Number(tabId));
@@ -2570,16 +2608,18 @@ handle("manager-close", (event) => managerRecord(event).window.close());
 handle("settings-get", (event) => { managerRecord(event); return { ...browserSettings }; });
 handle("settings-update", async (event, patch = {}) => {
   managerRecord(event);
-  const allowed = new Set(["theme","searchEngine","customSearchUrl","startup","defaultZoom","downloadPath","askDownloadLocation","doNotTrack","blockTrackers","blockPopups","restoreSession","autoLockMinutes","showBookmarksBar","accentColor","performanceMode","memorySaver","cpuLimit","ramLimit","gamingSounds","animatedBackground","sidebarEnabled","focusMode","securityLevel","blockAds","blockFingerprinting","blockCryptominers","stripTrackingParams","blockThirdPartyCookies","httpsFirst","permissionProtection","sleepingTabsMinutes","streamingMode","gamingSessionMode","autoShredOnClose"]);
+  const allowed = new Set(["theme","searchEngine","customSearchUrl","startup","defaultZoom","downloadPath","askDownloadLocation","doNotTrack","blockTrackers","blockPopups","restoreSession","autoLockMinutes","showBookmarksBar","accentColor","performanceMode","memorySaver","cpuLimit","ramLimit","gamingSounds","animatedBackground","sidebarEnabled","focusMode","securityLevel","blockAds","blockFingerprinting","blockCryptominers","stripTrackingParams","blockThirdPartyCookies","httpsFirst","permissionProtection","sleepingTabsMinutes","streamingMode","gamingSessionMode","autoShredOnClose","lowMemoryMode","maxActiveTabs"]);
   for (const [key, value] of Object.entries(patch)) if (allowed.has(key)) browserSettings[key] = value;
   browserSettings.defaultZoom = Math.max(50, Math.min(300, Number(browserSettings.defaultZoom) || 100));
   browserSettings.autoLockMinutes = Math.max(1, Math.min(120, Number(browserSettings.autoLockMinutes) || 10));
   browserSettings.cpuLimit = Math.max(25, Math.min(100, Number(browserSettings.cpuLimit) || 80));
   browserSettings.ramLimit = Math.max(1024, Math.min(16384, Number(browserSettings.ramLimit) || 4096));
   browserSettings.sleepingTabsMinutes = Math.max(1, Math.min(240, Number(browserSettings.sleepingTabsMinutes) || 20));
+  browserSettings.maxActiveTabs = Math.max(6, Math.min(100, Number(browserSettings.maxActiveTabs) || 24));
   browserStore.data.settings = { ...browserSettings };
   vault?.setAutoLockMinutes(browserSettings.autoLockMinutes);
   await browserStore.save();
+  applyPerformancePolicy();
   for (const ctx of contexts.values()) send(ctx, "browser-settings-updated", browserSettings);
   for (const item of managerWindows.values()) if (!item.window.isDestroyed()) item.window.webContents.send("settings-changed", browserSettings);
   return { ...browserSettings };
@@ -2672,10 +2712,42 @@ handle("gaming-metrics", (event) => {
     freeMemoryGB: (free / 1073741824).toFixed(1),
     processCount: metrics.length,
     tabCount: snapshot.length,
-    audibleTabs: snapshot.filter((tab) => tab.isAudible).length
+    audibleTabs: snapshot.filter((tab) => tab.isAudible).length,
+    sleepingTabs: snapshot.filter((tab) => tab.isSleeping).length,
+    policy: performancePolicy()
   };
 });
 handle("gaming-data", (event) => { managerRecord(event); return { notes: browserStore.data.notes || [], workspaces: browserStore.data.workspaces || [] }; });
+handle("quick-launch-get", (event) => {
+  managerRecord(event);
+  return structuredClone(browserStore.data.quickLaunch || []);
+});
+handle("quick-launch-save", async (event, items = []) => {
+  managerRecord(event);
+  const normalized = [];
+  for (const item of Array.isArray(items) ? items.slice(0,18) : []) {
+    const name = String(item?.name || "").trim().slice(0,30);
+    const url = String(item?.url || "").trim();
+    if (!name || !/^https?:\/\//i.test(url)) continue;
+    normalized.push({ id: String(item.id || crypto.randomUUID()), name, url });
+  }
+  browserStore.data.quickLaunch = normalized;
+  await browserStore.save();
+  return structuredClone(normalized);
+});
+handle("quick-launch-reset", async (event) => {
+  managerRecord(event);
+  browserStore.data.quickLaunch = [
+    { id:"discord", name:"Discord", url:"https://discord.com/app" },
+    { id:"youtube", name:"YouTube", url:"https://www.youtube.com" },
+    { id:"gmail", name:"Gmail", url:"https://mail.google.com" },
+    { id:"github", name:"GitHub", url:"https://github.com" },
+    { id:"chatgpt", name:"ChatGPT", url:"https://chatgpt.com" },
+    { id:"spotify", name:"Spotify", url:"https://open.spotify.com" }
+  ];
+  await browserStore.save();
+  return structuredClone(browserStore.data.quickLaunch);
+});
 handle("gaming-add-note", async (event, text) => {
   managerRecord(event);
   const note = { id: crypto.randomUUID(), text: String(text || "").trim().slice(0, 5000), createdAt: Date.now() };
@@ -3265,9 +3337,22 @@ if (process.platform === "win32") {
 }
 
 app.whenReady().then(async () => {
-  setInterval(() => { if (browserSettings.memorySaver) for (const ctx of contexts.values()) sleepInactiveTabs(ctx); }, 60000).unref?.();
+  applyPerformancePolicy();
+  setInterval(() => {
+    const pressure = os.freemem() / os.totalmem();
+    if (browserSettings.memorySaver || pressure < 0.18) applyPerformancePolicy();
+  }, 30000).unref?.();
   browserStore = new BrowserStore(app.getPath("userData"));
   await browserStore.load();
+  const totalMemoryGB = os.totalmem() / 1073741824;
+  if (totalMemoryGB <= 4.5 && browserStore.data.settings.lowMemoryMode !== false) {
+    browserStore.data.settings.lowMemoryMode = true;
+    browserStore.data.settings.memorySaver = true;
+    browserStore.data.settings.performanceMode = "eco";
+    browserStore.data.settings.sleepingTabsMinutes = Math.min(Number(browserStore.data.settings.sleepingTabsMinutes || 5), 5);
+    browserStore.data.settings.ramLimit = Math.min(Number(browserStore.data.settings.ramLimit || 3072), 3072);
+    await browserStore.save();
+  }
   browserSettings = browserStore.data.settings;
   history.push(...browserStore.data.history.slice(-1000));
   for (const item of browserStore.data.bookmarks) if (item?.url) bookmarks.set(item.url, item);

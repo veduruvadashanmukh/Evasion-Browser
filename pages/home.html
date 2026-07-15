@@ -48,15 +48,8 @@
 
     <section class="content-grid">
       <div class="main-column">
-        <div class="section-title"><div><span>QUICK LAUNCH</span><h2>Gaming & essentials</h2></div><small>One click away</small></div>
-        <div class="shortcut-grid">
-          <button class="shortcut neon-purple" data-url="https://discord.com/app"><span class="shortcut-logo"><img src="../assets/brands/discord.svg" alt="Discord"></span><span><strong>Discord</strong><small>Communities</small></span></button>
-          <button class="shortcut neon-violet" data-url="https://www.twitch.tv"><span class="shortcut-logo"><img src="../assets/brands/twitch.svg" alt="Twitch"></span><span><strong>Twitch</strong><small>Live streams</small></span></button>
-          <button class="shortcut neon-blue" data-url="https://store.steampowered.com"><span class="shortcut-logo"><img src="../assets/brands/steam.svg" alt="Steam"></span><span><strong>Steam</strong><small>Game library</small></span></button>
-          <button class="shortcut neon-red" data-url="https://www.youtube.com/gaming"><span class="shortcut-logo"><img src="../assets/brands/youtube.svg" alt="YouTube"></span><span><strong>YouTube Gaming</strong><small>Gaming videos</small></span></button>
-          <button class="shortcut neon-green" data-url="https://open.spotify.com"><span class="shortcut-logo"><img src="../assets/brands/spotify.svg" alt="Spotify"></span><span><strong>Spotify</strong><small>Music</small></span></button>
-          <button class="shortcut neon-cyan" data-url="https://github.com"><span class="shortcut-logo"><img src="../assets/brands/github.svg" alt="GitHub"></span><span><strong>GitHub</strong><small>Development</small></span></button>
-        </div>
+        <div class="section-title"><div><span>QUICK LAUNCH</span><h2>Your shortcuts</h2></div><button id="customizeLaunch" class="home-small-button" type="button">Customize</button></div>
+        <div id="homeShortcutGrid" class="shortcut-grid"></div>
 
         <div class="section-title games-heading"><div><span>DISCOVER</span><h2>Gaming pulse</h2></div><small>Fast access</small></div>
         <div class="news-grid">
@@ -101,6 +94,21 @@
       <div class="profile-actions">
         <button id="profileCancel" type="button" class="secondary-action">Cancel</button>
         <button type="submit" class="primary-action">Save profile</button>
+      </div>
+    </form>
+  </section>
+  <section id="launchModal" class="profile-modal" hidden>
+    <form id="homeLaunchForm" class="profile-card glass">
+      <span class="eyebrow">CUSTOMIZE QUICK LAUNCH</span>
+      <h2>Add your own shortcut</h2>
+      <p>Shortcuts are stored only on this computer.</p>
+      <label>Name<input id="homeLaunchName" maxlength="30" required placeholder="Gmail"></label>
+      <label>Website URL<input id="homeLaunchUrl" type="url" required placeholder="https://mail.google.com"></label>
+      <div id="homeLaunchList" class="home-launch-list"></div>
+      <div class="profile-actions">
+        <button id="restoreHomeLaunch" type="button" class="secondary-action">Restore defaults</button>
+        <button id="closeLaunchModal" type="button" class="secondary-action">Close</button>
+        <button type="submit" class="primary-action">Add shortcut</button>
       </div>
     </form>
   </section>
