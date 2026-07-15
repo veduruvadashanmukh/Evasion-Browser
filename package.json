@@ -1,7 +1,7 @@
 {
   "name": "evasion-browser",
-  "version": "1.4.0",
-  "description": "Evasion Browser — a privacy-focused gaming and productivity desktop browser built with Electron.",
+  "version": "1.4.1",
+  "description": "Evasion Browser \u2014 a privacy-focused gaming and productivity desktop browser built with Electron.",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -34,7 +34,7 @@
   "build": {
     "appId": "com.evasion.browser",
     "productName": "Evasion Browser",
-    "copyright": "Copyright © 2026 Evasion Browser",
+    "copyright": "Copyright \u00a9 2026 Evasion Browser",
     "asar": true,
     "compression": "maximum",
     "directories": {

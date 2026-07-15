@@ -32,7 +32,14 @@ jobs:
           node-version: 22
           cache: npm
           registry-url: https://registry.npmjs.org
-      - run: npm ci --no-audit --no-fund
+      - name: Install dependencies
+        shell: bash
+        env:
+          NPM_CONFIG_REGISTRY: https://registry.npmjs.org/
+          NPM_CONFIG_FETCH_RETRIES: 5
+          NPM_CONFIG_FETCH_RETRY_MINTIMEOUT: 20000
+          NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT: 120000
+        run: npm ci --no-audit --no-fund
       - run: npm run check
       - name: Build Windows
         run: npx electron-builder --win --x64 --publish never
@@ -67,7 +74,14 @@ jobs:
           node-version: 22
           cache: npm
           registry-url: https://registry.npmjs.org
-      - run: npm ci --no-audit --no-fund
+      - name: Install dependencies
+        shell: bash
+        env:
+          NPM_CONFIG_REGISTRY: https://registry.npmjs.org/
+          NPM_CONFIG_FETCH_RETRIES: 5
+          NPM_CONFIG_FETCH_RETRY_MINTIMEOUT: 20000
+          NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT: 120000
+        run: npm ci --no-audit --no-fund
       - run: npm run check
       - name: Build Linux
         run: npx electron-builder --linux AppImage deb --x64 --publish never
@@ -105,7 +119,14 @@ jobs:
           node-version: 22
           cache: npm
           registry-url: https://registry.npmjs.org
-      - run: npm ci --no-audit --no-fund
+      - name: Install dependencies
+        shell: bash
+        env:
+          NPM_CONFIG_REGISTRY: https://registry.npmjs.org/
+          NPM_CONFIG_FETCH_RETRIES: 5
+          NPM_CONFIG_FETCH_RETRY_MINTIMEOUT: 20000
+          NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT: 120000
+        run: npm ci --no-audit --no-fund
       - run: npm run publish:web
 
   pages:
