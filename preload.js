@@ -278,6 +278,8 @@ contextBridge.exposeInMainWorld("browserAPI", {
             callback
         ),
     onUpdateAvailable: (callback) => listen("browser-update-available", callback),
+    onUpdateStatus: (callback) => listen("browser-update-status", callback),
+    onBrowserUpdated: (callback) => listen("browser-updated", callback),
 
     onBookmarkUpdated: (callback) =>
         listen(

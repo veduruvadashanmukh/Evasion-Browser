@@ -1,6 +1,6 @@
 {
   "name": "evasion-browser",
-  "version": "1.2.0",
+  "version": "1.4.0",
   "description": "Evasion Browser — a privacy-focused gaming and productivity desktop browser built with Electron.",
   "main": "main.js",
   "scripts": {
@@ -114,7 +114,15 @@
     },
     "portable": {
       "artifactName": "Evasion-Portable-${version}-${arch}.${ext}"
-    }
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "veduruvadashanmukh",
+        "repo": "Evasion-Browser",
+        "releaseType": "release"
+      }
+    ]
   },
   "repository": {
     "type": "git",
@@ -124,5 +132,8 @@
   "bugs": {
     "url": "https://github.com/veduruvadashanmukh/Evasion-Browser/issues"
   },
-  "desktopName": "evasion-browser"
+  "desktopName": "evasion-browser",
+  "dependencies": {
+    "electron-updater": "^6.6.2"
+  }
 }

@@ -20,6 +20,13 @@ const { VaultService, generatePassword, strength } = require("./password-manager
 const { BrowserStore } = require("./browser-store");
 const { ProfileService } = require("./profile-service");
 
+let autoUpdater = null;
+try {
+  ({ autoUpdater } = require("electron-updater"));
+} catch (error) {
+  console.warn("Automatic updater unavailable:", error.message);
+}
+
 
 const UPDATE_REPOSITORY = "veduruvadashanmukh/Evasion-Browser";
 const UPDATE_RELEASES_URL = `https://github.com/${UPDATE_REPOSITORY}/releases`;
@@ -111,6 +118,120 @@ let browserSettings = {};
 const securityStats = { blockedAds: 0, blockedTrackers: 0, blockedMiners: 0, blockedOther: 0, startedAt: Date.now() };
 const managerWindows = new Map();
 const loadedExtensions = new Map();
+
+const updaterState = {
+  supported: Boolean(autoUpdater),
+  status: "idle",
+  currentVersion: app.getVersion(),
+  availableVersion: "",
+  downloadedVersion: "",
+  percent: 0,
+  error: ""
+};
+
+function broadcastUpdaterState(extra = {}) {
+  Object.assign(updaterState, extra);
+  const payload = { ...updaterState };
+  for (const ctx of contexts.values()) send(ctx, "browser-update-status", payload);
+  for (const win of managerWindows.values()) {
+    if (win && !win.isDestroyed()) win.webContents.send("manager-update-status", payload);
+  }
+  return payload;
+}
+
+async function rememberInstalledVersion() {
+  if (!browserStore) return;
+  const advanced = browserStore.data.advanced || (browserStore.data.advanced = {});
+  const previous = String(advanced.lastLaunchedVersion || "");
+  const current = app.getVersion();
+  advanced.lastLaunchedVersion = current;
+  if (advanced.pendingUpdateVersion === current) advanced.pendingUpdateVersion = "";
+  await browserStore.save();
+  if (previous && previous !== current && browserSettings.showWhatsNew !== false) {
+    setTimeout(() => {
+      for (const ctx of contexts.values()) {
+        send(ctx, "browser-updated", { previousVersion: previous, currentVersion: current });
+      }
+    }, 1600).unref?.();
+  }
+}
+
+function configureAutomaticUpdater() {
+  if (!autoUpdater || !app.isPackaged) {
+    return broadcastUpdaterState({
+      supported: Boolean(autoUpdater),
+      status: app.isPackaged ? "unavailable" : "development"
+    });
+  }
+
+  autoUpdater.autoDownload = true;
+  autoUpdater.autoInstallOnAppQuit = true;
+  autoUpdater.allowPrerelease = browserSettings.updateChannel === "beta";
+  autoUpdater.allowDowngrade = false;
+
+  autoUpdater.on("checking-for-update", () =>
+    broadcastUpdaterState({ status: "checking", error: "", percent: 0 }));
+
+  autoUpdater.on("update-available", (info) =>
+    broadcastUpdaterState({
+      status: "downloading",
+      availableVersion: String(info?.version || ""),
+      error: ""
+    }));
+
+  autoUpdater.on("update-not-available", () =>
+    broadcastUpdaterState({
+      status: "up-to-date",
+      availableVersion: "",
+      percent: 0,
+      error: ""
+    }));
+
+  autoUpdater.on("download-progress", (progress) =>
+    broadcastUpdaterState({
+      status: "downloading",
+      percent: Math.max(0, Math.min(100, Math.round(Number(progress?.percent || 0))))
+    }));
+
+  autoUpdater.on("update-downloaded", async (info) => {
+    const version = String(info?.version || updaterState.availableVersion || "");
+    broadcastUpdaterState({
+      status: "ready-on-quit",
+      downloadedVersion: version,
+      availableVersion: version,
+      percent: 100,
+      error: ""
+    });
+    if (browserStore) {
+      browserStore.data.advanced.pendingUpdateVersion = version;
+      browserStore.data.advanced.lastUpdateError = "";
+      await browserStore.save();
+    }
+  });
+
+  autoUpdater.on("error", async (error) => {
+    const message = String(error?.message || error || "Update failed.");
+    broadcastUpdaterState({ status: "error", error: message });
+    if (browserStore) {
+      browserStore.data.advanced.lastUpdateError = message;
+      await browserStore.save();
+    }
+  });
+
+  return broadcastUpdaterState();
+}
+
+async function checkAutomaticUpdate() {
+  if (!autoUpdater || !app.isPackaged || browserSettings.autoUpdateEnabled === false) {
+    return { ...updaterState };
+  }
+  try {
+    await autoUpdater.checkForUpdates();
+  } catch (error) {
+    broadcastUpdaterState({ status: "error", error: error.message });
+  }
+  return { ...updaterState };
+}
 
 const ctxFrom = (event) =>
   contexts.get(event.sender.id) || null;
@@ -2608,7 +2729,7 @@ handle("manager-close", (event) => managerRecord(event).window.close());
 handle("settings-get", (event) => { managerRecord(event); return { ...browserSettings }; });
 handle("settings-update", async (event, patch = {}) => {
   managerRecord(event);
-  const allowed = new Set(["theme","searchEngine","customSearchUrl","startup","defaultZoom","downloadPath","askDownloadLocation","doNotTrack","blockTrackers","blockPopups","restoreSession","autoLockMinutes","showBookmarksBar","accentColor","performanceMode","memorySaver","cpuLimit","ramLimit","gamingSounds","animatedBackground","sidebarEnabled","focusMode","securityLevel","blockAds","blockFingerprinting","blockCryptominers","stripTrackingParams","blockThirdPartyCookies","httpsFirst","permissionProtection","sleepingTabsMinutes","streamingMode","gamingSessionMode","autoShredOnClose","lowMemoryMode","maxActiveTabs"]);
+  const allowed = new Set(["theme","searchEngine","customSearchUrl","startup","defaultZoom","downloadPath","askDownloadLocation","doNotTrack","blockTrackers","blockPopups","restoreSession","autoLockMinutes","showBookmarksBar","accentColor","performanceMode","memorySaver","cpuLimit","ramLimit","gamingSounds","animatedBackground","sidebarEnabled","focusMode","securityLevel","blockAds","blockFingerprinting","blockCryptominers","stripTrackingParams","blockThirdPartyCookies","httpsFirst","permissionProtection","sleepingTabsMinutes","streamingMode","gamingSessionMode","autoShredOnClose","lowMemoryMode","maxActiveTabs","autoUpdateEnabled","updateChannel","showWhatsNew"]);
   for (const [key, value] of Object.entries(patch)) if (allowed.has(key)) browserSettings[key] = value;
   browserSettings.defaultZoom = Math.max(50, Math.min(300, Number(browserSettings.defaultZoom) || 100));
   browserSettings.autoLockMinutes = Math.max(1, Math.min(120, Number(browserSettings.autoLockMinutes) || 10));
@@ -3311,7 +3432,10 @@ function registerProfileHandlers() {
 
 
 /* Updates and release notifications */
-handle("browser-check-update", async () => fetchUpdateInfo());
+handle("browser-check-update", async () => {
+  if (app.isPackaged && autoUpdater) return checkAutomaticUpdate();
+  return fetchUpdateInfo();
+});
 handle("browser-open-updates", (event) => openManagerWindow("updates", ctxFrom(event)));
 handle("browser-open-update-download", async (_event, url) => {
   const target = String(url || UPDATE_RELEASES_URL);
@@ -3319,7 +3443,16 @@ handle("browser-open-update-download", async (_event, url) => {
   await shell.openExternal(target);
   return { success: true };
 });
-handle("updates-get", (event) => { managerRecord(event); return fetchUpdateInfo(); });
+handle("updates-get", async (event) => {
+  managerRecord(event);
+  const release = await fetchUpdateInfo();
+  return { ...release, updater: { ...updaterState }, automatic: browserSettings.autoUpdateEnabled !== false };
+});
+handle("updates-check-now", async (event) => {
+  managerRecord(event);
+  if (app.isPackaged && autoUpdater) return checkAutomaticUpdate();
+  return fetchUpdateInfo();
+});
 handle("updates-open-url", async (event, url) => {
   managerRecord(event);
   const target = String(url || UPDATE_RELEASES_URL);
@@ -3377,12 +3510,13 @@ app.whenReady().then(async () => {
   }
   if (profileService.unlocked) createWindow();
   else openProfileWindow();
-  setTimeout(async () => {
-    const info = await fetchUpdateInfo();
-    if (info.updateAvailable) {
-      for (const ctx of contexts.values()) send(ctx, "browser-update-available", info);
-    }
-  }, 12000).unref?.();
+  configureAutomaticUpdater();
+  await rememberInstalledVersion();
+  if (browserSettings.autoUpdateEnabled !== false) {
+    setTimeout(() => checkAutomaticUpdate(), 12000).unref?.();
+    const updateTimer = setInterval(() => checkAutomaticUpdate(), 6 * 60 * 60 * 1000);
+    updateTimer.unref?.();
+  }
 
 
   app.on(

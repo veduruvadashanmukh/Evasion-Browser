@@ -2,7 +2,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 const invoke = (channel, ...args) => ipcRenderer.invoke(channel, ...args);
 contextBridge.exposeInMainWorld('managerAPI', {
   getContext: () => invoke('manager-context'), close: () => invoke('manager-close'),
-  checkUpdates: () => invoke('updates-get'), openUpdateURL: (url) => invoke('updates-open-url', url),
+  checkUpdates: () => invoke('updates-get'), checkUpdatesNow: () => invoke('updates-check-now'), openUpdateURL: (url) => invoke('updates-open-url', url),
   getSettings: () => invoke('settings-get'), updateSettings: (patch) => invoke('settings-update', patch),
   chooseDownloadFolder: () => invoke('settings-choose-download-folder'), clearBrowsingData: () => invoke('settings-clear-data'),
   getExtensions: () => invoke('extensions-list'), loadExtension: () => invoke('extensions-load'), removeExtension: (id) => invoke('extensions-remove', id), reloadExtension: (id) => invoke('extensions-reload', id),
@@ -30,5 +30,6 @@ contextBridge.exposeInMainWorld('managerAPI', {
   getToolsData: () => invoke('tools-data'),
   addTask: (text) => invoke('tools-add-task', text), toggleTask: (id) => invoke('tools-toggle-task', id), deleteTask: (id) => invoke('tools-delete-task', id),
   savePomodoro: (value) => invoke('tools-save-pomodoro', value), openToolURL: (url) => invoke('tools-open-url', url), applyTheme: (patch) => invoke('tools-apply-theme', patch), localAI: (input) => invoke('tools-local-ai', input),
-  onSettingsChanged: (callback) => { const fn = (_event, payload) => callback(payload); ipcRenderer.on('settings-changed', fn); return () => ipcRenderer.removeListener('settings-changed', fn); }
+  onSettingsChanged: (callback) => { const fn = (_event, payload) => callback(payload); ipcRenderer.on('settings-changed', fn); return () => ipcRenderer.removeListener('settings-changed', fn); },
+onUpdateStatus: (callback) => { const fn = (_event, payload) => callback(payload); ipcRenderer.on('manager-update-status', fn); return () => ipcRenderer.removeListener('manager-update-status', fn); }
 });

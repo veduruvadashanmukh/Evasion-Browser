@@ -41,7 +41,10 @@ const DEFAULTS = {
     gamingSessionMode: false,
     autoShredOnClose: false,
     lowMemoryMode: false,
-    maxActiveTabs: 24
+    maxActiveTabs: 24,
+    autoUpdateEnabled: true,
+    updateChannel: 'stable',
+    showWhatsNew: true
   },
   quickLaunch: [
     { id: 'discord', name: 'Discord', url: 'https://discord.com/app' },
@@ -65,7 +68,7 @@ const DEFAULTS = {
   sync: { endpoint: '', username: '', password: '', deviceKey: '', lastSync: 0 },
   companion: {},
   knowledgeVault: [],
-  advanced: { crashRecovery: true, safeMode: false, lastHealthyStart: 0 },
+  advanced: { crashRecovery: true, safeMode: false, lastHealthyStart: 0, lastLaunchedVersion: '', pendingUpdateVersion: '', lastUpdateError: '' },
   extensionCatalog: [
     { id: 'ublock-origin-lite', name: 'uBlock Origin Lite', category: 'Privacy', url: 'https://github.com/gorhill/uBOL-home' },
     { id: 'dark-reader', name: 'Dark Reader', category: 'Appearance', url: 'https://github.com/darkreader/darkreader' },
