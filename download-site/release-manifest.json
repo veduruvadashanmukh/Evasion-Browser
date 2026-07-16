@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "1.5.1",
   "channel": "Stable",
   "downloads": [
     {
@@ -8,7 +8,7 @@
       "platform": "Windows 10/11 \u00b7 x64 \u00b7 Internet required",
       "platformKey": "windows",
       "description": "Chrome-style lightweight setup that downloads and installs the latest Evasion Browser package.",
-      "file": "downloads/Evasion-Web-Setup-1.0.0.exe",
+      "file": "downloads/Evasion-Web-Setup-1.5.1.exe",
       "sha256": "",
       "available": false
     },
@@ -18,7 +18,7 @@
       "platform": "Windows 10/11 \u00b7 x64",
       "platformKey": "windows",
       "description": "Recommended setup wizard with desktop and Start Menu shortcuts.",
-      "file": "downloads/Evasion-Browser-1.0.0-win-x64.exe",
+      "file": "downloads/Evasion-Browser-1.5.1-Windows-Setup.exe",
       "sha256": "",
       "available": false
     },
@@ -28,7 +28,7 @@
       "platform": "Windows \u00b7 x64",
       "platformKey": "windows",
       "description": "Run Evasion without installation from a folder or USB drive.",
-      "file": "downloads/Evasion-Browser-1.0.0-win-x64-portable.exe",
+      "file": "downloads/Evasion-Browser-1.5.1-Windows-Portable.exe",
       "sha256": "",
       "available": false
     },
@@ -38,7 +38,7 @@
       "platform": "Linux \u00b7 x64",
       "platformKey": "linux",
       "description": "Portable AppImage build for supported Linux distributions.",
-      "file": "downloads/Evasion-Browser-1.0.0-linux-x64.AppImage",
+      "file": "downloads/Evasion-Browser-1.5.1-Linux.AppImage",
       "sha256": "",
       "available": false
     },
@@ -52,5 +52,6 @@
       "sha256": "",
       "available": false
     }
-  ]
+  ],
+  "generatedAt": null
 }

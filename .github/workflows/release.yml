@@ -131,7 +131,7 @@ jobs:
 
   pages:
     name: GitHub Pages
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy_pages }}
+    if: ${{ startsWith(github.ref, 'refs/tags/') || (github.event_name == 'workflow_dispatch' && inputs.deploy_pages) }}
     needs: windows
     runs-on: ubuntu-latest
     environment:

@@ -2692,7 +2692,14 @@ function managerRecord(event) {
 }
 
 function openManagerWindow(type, ctx) {
-  const existing = [...managerWindows.values()].find((item) => item.type === type && item.ctx === ctx && !item.window.isDestroyed());
+  const existing = [...managerWindows.values()].find((item) => {
+    const win = item?.window;
+    return item?.type === type &&
+      item?.ctx === ctx &&
+      win &&
+      typeof win.isDestroyed === "function" &&
+      !win.isDestroyed();
+  });
   if (existing) { existing.window.show(); existing.window.focus(); return { success: true }; }
   const win = new BrowserWindow({
     icon: APP_ICON,
@@ -2796,7 +2803,18 @@ handle("settings-update", async (event, patch = {}) => {
   await browserStore.save();
   applyPerformancePolicy();
   for (const ctx of contexts.values()) send(ctx, "browser-settings-updated", browserSettings);
-  for (const item of managerWindows.values()) if (!item.window.isDestroyed()) item.window.webContents.send("settings-changed", browserSettings);
+  for (const item of managerWindows.values()) {
+    const win = item?.window || item;
+    if (
+      win &&
+      typeof win.isDestroyed === "function" &&
+      !win.isDestroyed() &&
+      win.webContents &&
+      !win.webContents.isDestroyed()
+    ) {
+      win.webContents.send("settings-changed", browserSettings);
+    }
+  }
   return { ...browserSettings };
 });
 handle("settings-choose-download-folder", async (event) => {
@@ -3016,7 +3034,18 @@ handle("tools-apply-theme", async (event, patch = {}) => {
   if (/^#[0-9a-f]{6}$/i.test(String(patch.accentColor||""))) browserSettings.accentColor = patch.accentColor;
   browserStore.data.settings = { ...browserSettings }; await browserStore.save();
   for (const ctx of contexts.values()) send(ctx, "browser-settings-updated", browserSettings);
-  for (const item of managerWindows.values()) if (!item.window.isDestroyed()) item.window.webContents.send("settings-changed", browserSettings);
+  for (const item of managerWindows.values()) {
+    const win = item?.window || item;
+    if (
+      win &&
+      typeof win.isDestroyed === "function" &&
+      !win.isDestroyed() &&
+      win.webContents &&
+      !win.webContents.isDestroyed()
+    ) {
+      win.webContents.send("settings-changed", browserSettings);
+    }
+  }
   return { ...browserSettings };
 });
 handle("tools-local-ai", async (event, input = {}) => {

@@ -1,3 +1,7 @@
+; UPDATE-SAFE UNINSTALL HOOK
+; electron-updater invokes the previous uninstaller silently during an update.
+; IfSilent must remain the first branch so update installs never display the
+; user-data deletion question. Interactive uninstalls still show the prompt.
 !macro customUnInstall
   ; electron-builder runs the previous uninstaller silently while applying an
   ; update. Never show the data-deletion question in that silent update path,
