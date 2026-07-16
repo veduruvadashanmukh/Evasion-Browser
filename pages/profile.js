@@ -30,8 +30,6 @@ $('passwordTab').onclick=()=>setMethod('password');$('pinTab').onclick=()=>setMe
 $('loginForm').addEventListener('submit',async e=>{e.preventDefault();error('loginError');try{await api.login({method,credential:$('credential').value});window.close();}catch(err){error('loginError',err.message);$('credential').select();}});
 $('manageForm').addEventListener('submit',async e=>{e.preventDefault();error('manageError');try{status=await api.update({name:$('manageName').value,email:$('manageEmail').value,avatarColor:$('manageColor').value});error('manageError','Saved successfully.');fillManage(status.profile);}catch(err){error('manageError',err.message);}});
 $('logoutNow').onclick=async()=>{await api.logout();window.close();};
-$('passwordForm').addEventListener('submit',async e=>{e.preventDefault();error('passwordError');try{await api.changePassword({currentPassword:$('currentPassword').value,newPassword:$('newPassword').value});e.target.reset();error('passwordError','Password updated. Sign in again next time.');}catch(err){error('passwordError',err.message);}});
-$('pinForm').addEventListener('submit',async e=>{e.preventDefault();error('pinError');try{const hadPin=Boolean($('newPin').value);await api.setPin({password:$('pinPassword').value,pin:$('newPin').value});e.target.reset();error('pinError',hadPin?'PIN updated.':'PIN removed.');}catch(err){error('pinError',err.message);}});
 $('resetBrowser').onclick=async()=>{
   error('resetError');
   if(!$('resetConfirm').checked)return error('resetError','Confirm that you understand this cannot be undone.');
