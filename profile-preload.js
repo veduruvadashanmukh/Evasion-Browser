@@ -7,7 +7,8 @@ contextBridge.exposeInMainWorld('profileAPI', {
   update: (data) => invoke('profile-update', data),
   changePassword: (data) => invoke('profile-change-password', data),
   setPin: (data) => invoke('profile-set-pin', data),
-  lock: (forget = false) => invoke('profile-lock', { forget }),
+  refreshSession: () => invoke('profile-refresh-session'),
+  logout: () => invoke('profile-logout'),
   resetBrowserData: (password) => invoke('profile-reset-browser-data', { password }),
   chooseAvatarColor: () => invoke('profile-random-color')
 });

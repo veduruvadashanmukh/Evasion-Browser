@@ -3249,7 +3249,7 @@ handle("advanced-command", async (event, command) => {
   if (value === "open settings") return openManagerWindow("settings", ctx);
   if (value === "open security") return openManagerWindow("security", ctx);
   if (value === "open performance") return openManagerWindow("gaming", ctx);
-  if (value === "lock profile") { for (const c of contexts.values()) if (windowReady(c)) c.window.close(); profileService?.lock(); return { success: true }; }
+  if (value === "logout profile") { for (const c of contexts.values()) if (windowReady(c)) c.window.close(); profileService?.logout(); setImmediate(() => openProfileWindow()); return { success: true }; }
   return { success: false, error: "Unknown command." };
 });
 
@@ -3428,8 +3428,9 @@ function registerProfileHandlers() {
   profileHandle("profile-update", (data) => profileService.update(data));
   profileHandle("profile-change-password", (data) => profileService.changePassword(data.currentPassword, data.newPassword));
   profileHandle("profile-set-pin", (data) => profileService.setPin(data.password, data.pin));
-  profileHandle("profile-lock", (data) => {
-    const result = profileService.lock({ forget: Boolean(data.forget) });
+  profileHandle("profile-refresh-session", () => profileService.refreshSession());
+  profileHandle("profile-logout", async () => {
+    const result = await profileService.logout();
     for (const ctx of contexts.values()) if (windowReady(ctx)) ctx.window.close();
     setImmediate(() => openProfileWindow());
     return result;
@@ -3484,8 +3485,8 @@ function registerProfileHandlers() {
     return { success: true };
   });
   handle("browser-get-profile", () => profileService?.status() || { exists: false, unlocked: false, profile: null });
-  handle("browser-lock-profile", () => {
-    profileService?.lock();
+  handle("browser-logout-profile", async () => {
+    await profileService?.logout();
     for (const ctx of contexts.values()) if (windowReady(ctx)) ctx.window.close();
     setImmediate(() => openProfileWindow());
     return { success: true };
@@ -3557,15 +3558,6 @@ app.whenReady().then(async () => {
   profileService = new ProfileService(app.getPath("userData"));
   await profileService.init();
   registerProfileHandlers();
-  let profileWasUnlocked = profileService.unlocked;
-  const profileLockWatcher = setInterval(() => {
-    if (profileWasUnlocked && !profileService.unlocked) {
-      for (const ctx of contexts.values()) if (windowReady(ctx)) ctx.window.close();
-      openProfileWindow();
-    }
-    profileWasUnlocked = profileService.unlocked;
-  }, 15000);
-  profileLockWatcher.unref?.();
   const persistentSession = session.fromPartition("persist:evasion-browser");
   for (const meta of browserStore.data.extensions) {
     try { const ext = await persistentSession.loadExtension(meta.path, { allowFileAccess: true }); loadedExtensions.set(ext.id, { ...meta, id: ext.id, name: ext.name, version: ext.version }); } catch (error) { console.warn("Extension restore failed:", meta.path, error.message); }

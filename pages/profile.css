@@ -8,3 +8,6 @@
 .danger-zone summary{color:#ff8aa1}.danger-content{padding-top:16px}.danger-content h2{margin:0 0 8px;font-size:18px}.danger-content>p{margin:0 0 16px;color:var(--muted);line-height:1.55}.danger-content .check{margin:14px 0}.danger-button{width:100%;min-height:46px;border:1px solid rgba(255,107,137,.5);border-radius:13px;color:#fff;background:linear-gradient(135deg,#a72445,#ff416c);font-weight:850;cursor:pointer}.danger-button:hover{filter:brightness(1.08)}.danger-button:disabled{opacity:.6;cursor:wait}
 
 .password-rules{display:block;margin-top:7px;color:#9ea4c4;font-size:12px;line-height:1.45}
+
+.session-note{grid-column:1/-1;margin:0;padding:12px 14px;border-radius:12px;background:rgba(53,220,255,.08);color:#aeb9d6;border:1px solid rgba(53,220,255,.18)}
+.danger-outline{border:1px solid rgba(255,100,130,.65)!important;color:#ff7895!important;background:transparent!important}

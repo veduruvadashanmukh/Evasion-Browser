@@ -20,16 +20,16 @@ async function load(){
   fillLogin(status.profile);show('loginView');$('credential').focus();
 }
 function fillLogin(profile){setAvatar($('loginAvatar'),profile);$('loginTitle').textContent=`Welcome back, ${profile?.name || 'User'}`;$('loginEmail').textContent=profile?.email || 'Your local Evasion profile';}
-function fillManage(profile){setAvatar($('manageAvatar'),profile);$('manageName').value=profile?.name||'';$('manageEmail').value=profile?.email||'';$('manageColor').value=profile?.avatarColor||'#845cff';$('manageLock').value=String(status.lockMinutes||30);}
+function fillManage(profile){setAvatar($('manageAvatar'),profile);$('manageName').value=profile?.name||'';$('manageEmail').value=profile?.email||'';$('manageColor').value=profile?.avatarColor||'#845cff';}
 function setMethod(next){method=next;$('passwordTab').classList.toggle('active',method==='password');$('pinTab').classList.toggle('active',method==='pin');$('credentialLabel').firstChild.textContent=method==='pin'?'PIN':'Password';$('credential').value='';$('credential').inputMode=method==='pin'?'numeric':'text';$('credential').focus();}
 
 $('createName').addEventListener('input',()=>setAvatar($('createAvatar'),{name:$('createName').value}));
 $('createPassword').addEventListener('input',e=>strength(e.target.value));
-$('createForm').addEventListener('submit',async e=>{e.preventDefault();error('createError');if($('createPassword').value!==$('confirmPassword').value)return error('createError','Passwords do not match.');try{await api.create({name:$('createName').value,email:$('createEmail').value,password:$('createPassword').value,pin:$('createPin').value,lockMinutes:+$('createLock').value,remember:$('createRemember').checked});window.close();}catch(err){error('createError',err.message);}});
+$('createForm').addEventListener('submit',async e=>{e.preventDefault();error('createError');if($('createPassword').value!==$('confirmPassword').value)return error('createError','Passwords do not match.');try{await api.create({name:$('createName').value,email:$('createEmail').value,password:$('createPassword').value,pin:$('createPin').value,});window.close();}catch(err){error('createError',err.message);}});
 $('passwordTab').onclick=()=>setMethod('password');$('pinTab').onclick=()=>setMethod('pin');
-$('loginForm').addEventListener('submit',async e=>{e.preventDefault();error('loginError');try{await api.login({method,credential:$('credential').value,remember:$('loginRemember').checked});window.close();}catch(err){error('loginError',err.message);$('credential').select();}});
-$('manageForm').addEventListener('submit',async e=>{e.preventDefault();error('manageError');try{status=await api.update({name:$('manageName').value,email:$('manageEmail').value,avatarColor:$('manageColor').value,lockMinutes:+$('manageLock').value});error('manageError','Saved successfully.');fillManage(status.profile);}catch(err){error('manageError',err.message);}});
-$('lockNow').onclick=async()=>{await api.lock(false);window.close();};
+$('loginForm').addEventListener('submit',async e=>{e.preventDefault();error('loginError');try{await api.login({method,credential:$('credential').value});window.close();}catch(err){error('loginError',err.message);$('credential').select();}});
+$('manageForm').addEventListener('submit',async e=>{e.preventDefault();error('manageError');try{status=await api.update({name:$('manageName').value,email:$('manageEmail').value,avatarColor:$('manageColor').value});error('manageError','Saved successfully.');fillManage(status.profile);}catch(err){error('manageError',err.message);}});
+$('logoutNow').onclick=async()=>{await api.logout();window.close();};
 $('passwordForm').addEventListener('submit',async e=>{e.preventDefault();error('passwordError');try{await api.changePassword({currentPassword:$('currentPassword').value,newPassword:$('newPassword').value});e.target.reset();error('passwordError','Password updated. Sign in again next time.');}catch(err){error('passwordError',err.message);}});
 $('pinForm').addEventListener('submit',async e=>{e.preventDefault();error('pinError');try{const hadPin=Boolean($('newPin').value);await api.setPin({password:$('pinPassword').value,pin:$('newPin').value});e.target.reset();error('pinError',hadPin?'PIN updated.':'PIN removed.');}catch(err){error('pinError',err.message);}});
 $('resetBrowser').onclick=async()=>{
@@ -47,3 +47,7 @@ $('resetBrowser').onclick=async()=>{
   }
 };
 load().catch(err=>{show('loginView');error('loginError',err.message);});
+
+const refreshProfileSession=()=>api.refreshSession?.().catch(()=>{});
+setInterval(refreshProfileSession,30*60*1000);
+window.addEventListener('focus',refreshProfileSession);

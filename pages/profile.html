@@ -24,7 +24,7 @@
         <label>Quick PIN <small>optional</small><input id="createPin" type="password" inputmode="numeric" maxlength="8" placeholder="4–8 digits"></label>
         
         <div class="strength"><span id="strengthText">Password strength</span><i id="strengthBar"></i></div>
-        <label class="check"><input id="createRemember" type="checkbox"><span>Keep me signed in for 7 days on this computer</span></label>
+        <p class="session-note">You’ll stay signed in for 7 days. Using Evasion refreshes this period.</p>
         <p id="createError" class="error" role="alert"></p>
         <button class="primary" type="submit">Create and enter Evasion</button>
       </form>
@@ -36,7 +36,7 @@
       <form id="loginForm">
         <div class="method-tabs"><button id="passwordTab" type="button" class="active">Password</button><button id="pinTab" type="button">PIN</button></div>
         <label id="credentialLabel">Password<input id="credential" type="password" autocomplete="current-password" required autofocus></label>
-        <label class="check"><input id="loginRemember" type="checkbox"><span>Keep me signed in for 7 days</span></label>
+        <p class="session-note">This device keeps you signed in for 7 days and refreshes the session while you use Evasion.</p>
         <p id="loginError" class="error" role="alert"></p>
         <button class="primary" type="submit">Unlock browser</button>
       </form>
@@ -51,7 +51,7 @@
         
         <label>Profile color<input id="manageColor" type="color"></label>
         <p id="manageError" class="error"></p>
-        <div class="actions"><button id="lockNow" class="secondary" type="button">Lock now</button><button class="primary" type="submit">Save changes</button></div>
+        <div class="actions"><button id="logoutNow" class="secondary danger-outline" type="button">Logout</button><button class="primary" type="submit">Save changes</button></div>
       </form>
       <details><summary>Change password</summary><form id="passwordForm" class="form-grid compact"><label>Current password<input id="currentPassword" type="password" required></label><label>New password<input id="newPassword" type="password" minlength="8" required placeholder="8+ characters, with a letter and number"><small class="password-rules">At least one letter and one number; no spaces.</small></label><p id="passwordError" class="error"></p><button class="secondary" type="submit">Update password</button></form></details>
       <details><summary>Set or remove quick PIN</summary><form id="pinForm" class="form-grid compact"><label>Current password<input id="pinPassword" type="password" required></label><label>New PIN <small>leave empty to remove</small><input id="newPin" type="password" inputmode="numeric" maxlength="8"></label><p id="pinError" class="error"></p><button class="secondary" type="submit">Update PIN</button></form></details>
