@@ -1,6 +1,6 @@
 {
   "name": "evasion-browser",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Evasion Browser — a privacy-focused gaming and productivity desktop browser built with Electron.",
   "main": "main.js",
   "scripts": {

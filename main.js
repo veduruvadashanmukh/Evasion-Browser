@@ -205,7 +205,7 @@ function configureAutomaticUpdater() {
   autoUpdater.on("update-downloaded", async (info) => {
     const version = String(info?.version || updaterState.availableVersion || "");
     broadcastUpdaterState({
-      status: "ready-on-quit",
+      status: "installing",
       downloadedVersion: version,
       availableVersion: version,
       percent: 100,
@@ -216,6 +216,17 @@ function configureAutomaticUpdater() {
       browserStore.data.advanced.lastUpdateError = "";
       await browserStore.save();
     }
+
+    // Explicit silent installation prevents the old uninstaller from showing
+    // its interactive data-deletion prompt during an automatic update.
+    setTimeout(() => {
+      try {
+        autoUpdater.quitAndInstall(true, true);
+      } catch (error) {
+        const message = String(error?.message || error || "Unable to install update.");
+        broadcastUpdaterState({ status: "error", error: message });
+      }
+    }, 1200);
   });
 
   autoUpdater.on("error", async (error) => {
@@ -3465,8 +3476,7 @@ function registerProfileHandlers() {
     return result;
   });
   profileHandle("profile-reset-browser-data", async (data) => {
-    const password = String(data?.password || "");
-    await profileService.resetAll(password);
+    await profileService.resetAll();
 
     vault?.lock();
     await vault?.reset?.();

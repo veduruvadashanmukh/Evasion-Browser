@@ -15,49 +15,29 @@
     <section id="loadingView" class="panel center"><div class="spinner"></div><p>Preparing your profile…</p></section>
 
     <section id="createView" class="panel" hidden>
-      <div class="hero"><div id="createAvatar" class="avatar">E</div><div><p class="kicker">FIRST-TIME SETUP</p><h1>Create your personal browser</h1><p>Your profile, preferences and vault stay protected on this computer.</p></div></div>
+      <div class="hero"><div id="createAvatar" class="avatar">E</div><div><p class="kicker">FIRST-TIME SETUP</p><h1>Create your personal browser</h1><p>Your profile and preferences stay on this computer.</p></div></div>
       <form id="createForm" class="form-grid">
         <label>Display name<input id="createName" maxlength="40" autocomplete="name" required placeholder="Your name"></label>
         <label>Email <small>optional</small><input id="createEmail" type="email" maxlength="100" autocomplete="email" placeholder="name@example.com"></label>
-        <label>Password<input id="createPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="8+ characters, with a letter and number"><small class="password-rules">Use 8 or more characters, at least one letter and one number. Uppercase and symbols are recommended.</small></label>
-        <label>Confirm password<input id="confirmPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="Repeat password"></label>
-        <label>Quick PIN <small>optional</small><input id="createPin" type="password" inputmode="numeric" maxlength="8" placeholder="4–8 digits"></label>
-        
-        <div class="strength"><span id="strengthText">Password strength</span><i id="strengthBar"></i></div>
-        <p class="session-note">You’ll stay signed in for 7 days. Using Evasion refreshes this period.</p>
         <p id="createError" class="error" role="alert"></p>
         <button class="primary" type="submit">Create and enter Evasion</button>
       </form>
     </section>
 
-    <section id="loginView" class="panel login" hidden>
-      <div id="loginAvatar" class="avatar large">E</div>
-      <p class="kicker">WELCOME BACK</p><h1 id="loginTitle">Unlock Evasion</h1><p id="loginEmail" class="muted"></p>
-      <form id="loginForm">
-        <div class="method-tabs"><button id="passwordTab" type="button" class="active">Password</button><button id="pinTab" type="button">PIN</button></div>
-        <label id="credentialLabel">Password<input id="credential" type="password" autocomplete="current-password" required autofocus></label>
-        <p class="session-note">This device keeps you signed in for 7 days and refreshes the session while you use Evasion.</p>
-        <p id="loginError" class="error" role="alert"></p>
-        <button class="primary" type="submit">Unlock browser</button>
-      </form>
-      <p class="privacy">Your password is verified locally and is never sent online.</p>
-    </section>
-
     <section id="manageView" class="panel" hidden>
-      <div class="hero"><div id="manageAvatar" class="avatar">E</div><div><p class="kicker">PROFILE SETTINGS</p><h1>Personalize your browser</h1><p>Update your identity and security preferences.</p></div></div>
+      <div class="hero"><div id="manageAvatar" class="avatar">E</div><div><p class="kicker">PROFILE SETTINGS</p><h1>Personalize your browser</h1><p>Update your profile details.</p></div></div>
       <form id="manageForm" class="form-grid">
         <label>Display name<input id="manageName" maxlength="40" required></label>
         <label>Email<input id="manageEmail" type="email" maxlength="100"></label>
         
         <label>Profile color<input id="manageColor" type="color"></label>
         <p id="manageError" class="error"></p>
-        <div class="actions"><button id="logoutNow" class="secondary danger-outline" type="button">Logout</button><button class="primary" type="submit">Save changes</button></div>
+        <div class="actions"><button class="primary" type="submit">Save changes</button></div>
       </form>
       <details class="danger-zone"><summary>Reset Evasion Browser</summary>
         <div class="danger-content">
           <h2>Delete all local browser data</h2>
           <p>This permanently removes your profile, password vault, history, bookmarks, downloads list, cookies, cache, site storage, settings, workspaces, notes and saved sessions from this computer.</p>
-          <label>Confirm your profile password<input id="resetPassword" type="password" autocomplete="current-password" placeholder="Enter your password"></label>
           <label class="check"><input id="resetConfirm" type="checkbox"><span>I understand this cannot be undone.</span></label>
           <p id="resetError" class="error"></p>
           <button id="resetBrowser" class="danger-button" type="button">Reset browser and restart</button>
