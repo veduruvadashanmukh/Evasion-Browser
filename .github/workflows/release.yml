@@ -131,7 +131,9 @@ jobs:
 
   pages:
     name: GitHub Pages
-    if: ${{ startsWith(github.ref, 'refs/tags/') || (github.event_name == 'workflow_dispatch' && inputs.deploy_pages) }}
+    # Deploy Pages only from a manual run on an allowed branch.
+    # Tag refs are commonly blocked by the github-pages environment protection rules.
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy_pages }}
     needs: windows
     runs-on: ubuntu-latest
     environment:
